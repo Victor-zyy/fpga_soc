@@ -1,0 +1,81 @@
+riscv64-unknown-linux-gnu-readelf -h -S -l -W 
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF64
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           RISC-V
+  Version:                           0x1
+  Entry point address:               0x1052c
+  Start of program headers:          64 (bytes into file)
+  Start of section headers:          734832 (bytes into file)
+  Flags:                             0x5, RVC, double-float ABI
+  Size of this header:               64 (bytes)
+  Size of program headers:           56 (bytes)
+  Number of program headers:         7
+  Size of section headers:           64 (bytes)
+  Number of section headers:         32
+  Section header string table index: 31
+
+Section Headers:
+  [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            0000000000000000 000000 000000 00      0   0  0
+  [ 1] .note.ABI-tag     NOTE            00000000000101c8 0001c8 000020 00   A  0   0  4
+  [ 2] .rela.dyn         RELA            00000000000101e8 0001e8 000048 18   A  0   0  8
+  [ 3] .text             PROGBITS        0000000000010230 000230 040fb4 00  AX  0   0  4
+  [ 4] .rodata           PROGBITS        00000000000511f0 0411f0 01b78c 00   A  0   0 16
+  [ 5] .eh_frame         PROGBITS        000000000006c980 05c980 00d6f4 00   A  0   0  8
+  [ 6] .gcc_except_table PROGBITS        000000000007a074 06a074 000113 00   A  0   0  1
+  [ 7] .tdata            PROGBITS        000000000007bc80 06ac80 000018 00 WAT  0   0  8
+  [ 8] .tbss             NOBITS          000000000007bc98 06ac98 000040 00 WAT  0   0  8
+  [ 9] .preinit_array    PREINIT_ARRAY   000000000007bc98 06ac98 000008 08  WA  0   0  1
+  [10] .init_array       INIT_ARRAY      000000000007bca0 06aca0 000008 08  WA  0   0  8
+  [11] .fini_array       FINI_ARRAY      000000000007bca8 06aca8 000010 08  WA  0   0  8
+  [12] .data.rel.ro      PROGBITS        000000000007bcb8 06acb8 003ef8 00  WA  0   0  8
+  [13] .got              PROGBITS        000000000007fbb0 06ebb0 000440 08  WA  0   0  8
+  [14] .got.plt          PROGBITS        000000000007fff0 06eff0 000010 08  WA  0   0  8
+  [15] .data             PROGBITS        0000000000080000 06f000 001894 00  WA  0   0  8
+  [16] .sdata            PROGBITS        0000000000081898 070898 000014 00  WA  0   0  8
+  [17] .sbss             NOBITS          00000000000818ac 0708ac 000004 00  WA  0   0  4
+  [18] .bss              NOBITS          00000000000818b0 0708ac 0053e8 00  WA  0   0  8
+  [19] .comment          PROGBITS        0000000000000000 0708ac 00002d 01  MS  0   0  1
+  [20] .riscv.attributes RISCV_ATTRIBUTES 0000000000000000 0708d9 00004b 00      0   0  1
+  [21] .debug_aranges    PROGBITS        0000000000000000 070924 0001a0 00      0   0  1
+  [22] .debug_info       PROGBITS        0000000000000000 070ac4 00de78 00      0   0  1
+  [23] .debug_abbrev     PROGBITS        0000000000000000 07e93c 0017b5 00      0   0  1
+  [24] .debug_line       PROGBITS        0000000000000000 0800f1 010714 00      0   0  1
+  [25] .debug_str        PROGBITS        0000000000000000 090805 003dfe 01  MS  0   0  1
+  [26] .debug_line_str   PROGBITS        0000000000000000 094603 000b64 01  MS  0   0  1
+  [27] .debug_loclists   PROGBITS        0000000000000000 095167 0080d9 00      0   0  1
+  [28] .debug_rnglists   PROGBITS        0000000000000000 09d240 0014b3 00      0   0  1
+  [29] .symtab           SYMTAB          0000000000000000 09e6f8 00dfb0 18     30 1291  8
+  [30] .strtab           STRTAB          0000000000000000 0ac6a8 006e72 00      0   0  1
+  [31] .shstrtab         STRTAB          0000000000000000 0b351a 00014f 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  D (mbind), p (processor specific)
+
+Program Headers:
+  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
+  RISCV_ATTRIBUT 0x0708d9 0x0000000000000000 0x0000000000000000 0x00004b 0x000000 R   0x1
+  LOAD           0x000000 0x0000000000010000 0x0000000000010000 0x06a187 0x06a187 R E 0x1000
+  LOAD           0x06ac80 0x000000000007bc80 0x000000000007bc80 0x005c2c 0x00b018 RW  0x1000
+  NOTE           0x0001c8 0x00000000000101c8 0x00000000000101c8 0x000020 0x000020 R   0x4
+  TLS            0x06ac80 0x000000000007bc80 0x000000000007bc80 0x000018 0x000058 R   0x8
+  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x10
+  GNU_RELRO      0x06ac80 0x000000000007bc80 0x000000000007bc80 0x004380 0x004380 R   0x1
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     .riscv.attributes 
+   01     .note.ABI-tag .rela.dyn .text .rodata .eh_frame .gcc_except_table 
+   02     .tdata .preinit_array .init_array .fini_array .data.rel.ro .got .got.plt .data .sdata .sbss .bss 
+   03     .note.ABI-tag 
+   04     .tdata .tbss 
+   05     
+   06     .tdata .preinit_array .init_array .fini_array .data.rel.ro .got .got.plt 

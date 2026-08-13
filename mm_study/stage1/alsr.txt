@@ -1,0 +1,60 @@
+~ # chmod +x vm_layout 
+~ # for i in 1 2 3 4 5; do
+>     echo "===== run $i ====="
+ >     printf '\n' |
+ >         ./vm_layout |
+ >         grep -E 'sample_function|heap_memory|mapped_memory|stack_variable'
+> done
+===== run 1 =====
+sample_function     : 0x10604
+heap_memory         : 0x884c0
+mapped_memory       : 0x3fa284c000
+stack_variable      : 0x3fc621fb64
+===== run 2 =====
+sample_function     : 0x10604
+heap_memory         : 0x884c0
+mapped_memory       : 0x3f97216000
+stack_variable      : 0x3fcdf13b64
+===== run 3 =====
+sample_function     : 0x10604
+heap_memory         : 0x884c0
+mapped_memory       : 0x3fb22a9000
+stack_variable      : 0x3fc31efb64
+===== run 4 =====
+sample_function     : 0x10604
+heap_memory         : 0x884c0
+mapped_memory       : 0x3f8b071000
+stack_variable      : 0x3fd829fb64
+===== run 5 =====
+sample_function     : 0x10604
+heap_memory         : 0x884c0
+mapped_memory       : 0x3fa9f75000
+stack_variable      : 0x3fe3e45b64
+
+~ # echo 2 > /proc/sys/kernel/randomize_va_space
+~ # for i in 1 2 3 4 5; do 
+> echo "===== run $i ====="
+> printf '\n' | ./vm_layout  | grep -E 'sample_function|heap_memory|mapped_memor
+y|stack_variable'
+> done
+===== run 1 =====
+sample_function     : 0x10604
+heap_memory         : 0x5ca14c0
+mapped_memory       : 0x3f93483000
+===== run 2 =====
+sample_function     : 0x10604
+heap_memory         : 0xd8364c0
+mapped_memory       : 0x3f9d100000
+===== run 3 =====
+sample_function     : 0x10604
+heap_memory         : 0x24f284c0
+mapped_memory       : 0x3f872c1000
+===== run 4 =====
+sample_function     : 0x10604
+heap_memory         : 0x2cca94c0
+mapped_memory       : 0x3f9ce22000
+===== run 5 =====
+sample_function     : 0x10604
+heap_memory         : 0x32a154c0
+mapped_memory       : 0x3fb95c7000
+

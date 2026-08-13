@@ -1,0 +1,61 @@
+~ # cat vm_layout.status 
+Name:   vm_layout_2
+Umask:  0022
+State:  S (sleeping)
+Tgid:   100
+Ngid:   0
+Pid:    100
+PPid:   48
+TracerPid:      0
+Uid:    0       0       0       0
+Gid:    0       0       0       0
+FDSize: 64
+Groups: 0 
+NStgid: 100
+NSpid:  100
+NSpgid: 100
+NSsid:  48
+Kthread:        0
+VmPeak:      764 kB
+VmSize:      764 kB
+VmLck:         0 kB
+VmPin:         0 kB
+VmHWM:       384 kB
+VmRSS:       384 kB
+RssAnon:               0 kB
+RssFile:               0 kB
+RssShmem:            384 kB
+VmData:      168 kB
+VmStk:       132 kB
+VmExe:       428 kB
+VmLib:         8 kB
+VmPTE:        24 kB
+VmSwap:        0 kB
+HugetlbPages:          0 kB
+CoreDumping:    0
+THP_enabled:    0
+untag_mask:     0xffffffffffffffff
+Threads:        1
+SigQ:   0/3895
+SigPnd: 0000000000000000
+ShdPnd: 0000000000000000
+SigBlk: 0000000000000000
+SigIgn: 0000000000000000
+SigCgt: 0000000000000000
+CapInh: 0000000000000000
+CapPrm: 000001ffffffffff
+CapEff: 000001ffffffffff
+CapBnd: 000001ffffffffff
+CapAmb: 0000000000000000
+NoNewPrivs:     0
+Seccomp:        0
+Speculation_Store_Bypass:       unknown
+SpeculationIndirectBranch:      unsupported
+Cpus_allowed:   1
+Cpus_allowed_list:      0
+Mems_allowed:   1
+Mems_allowed_list:      0
+voluntary_ctxt_switches:        1
+nonvoluntary_ctxt_switches:     9
+~ # 
+
