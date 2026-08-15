@@ -1,0 +1,48 @@
+~ # ./populate_test populate-r 16 |
+  >     tee stage2_5_populate_r.txt
+PID                  : 55
+mode                 : populate-r
+mapping address      : 0x3f9112b000
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+VmPTE baseline       : 24 kB
+
+========== mmap measurement ==========
+minor faults         : 4096
+major faults         : 0
+cycles               : 11177709
+instructions         : 8041565
+cycles/page          : 2728.93
+instructions/page    : 1963.27
+
+========== state immediately after mmap ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+========== first user read pass ==========
+minor faults         : 0
+major faults         : 0
+cycles               : 162688
+instructions         : 49315
+cycles/page          : 39.72
+instructions/page    : 12.04
+
+========== state after first user access ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+read_sink            : 0
+

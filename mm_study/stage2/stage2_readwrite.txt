@@ -1,0 +1,252 @@
+~ # chmod +x demand_paging 
+~ # ./demand_paging readwrite 16 |
+>     tee stage2_readwrite.txt
+PID             : 133
+mode            : readwrite
+page size       : 4096 bytes
+mapping size    : 16 MiB
+page count      : 4096 
+mapping address         : 0x3fb3879000
+mmap minor faults       : 0
+mmap major faults       : 0
+mmap cycles             : 31081
+mmap instructions       : 14350
+
+--- State after mmap, before touching pages ---
+
+=========== smaps for 0x3fb3879000 =========
+3fb3879000-3fb4879000 rw-p 00000000 00:00 0 
+Size:              16384 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:                   0 kB
+Pss:                   0 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:         0 kB
+Referenced:            0 kB
+Anonymous:             0 kB
+AnonHugePages:         0 kB
+VmFlags: rd wr mr mw me ac 
+
+============ Process Status =========
+VmSize:    17208 kB
+RssAnon:               0 kB
+RssFile:               0 kB
+RssShmem:            384 kB
+VmData:    16548 kB
+VmPTE:        28 kB
+
+========== first read pass: missing PTE -> shared zero page ============
+pages               : 4096
+minor faults delta  : 4096
+major faults delta  : 0
+cycles              : 10417933
+instructions        : 7509309
+cycles/page         : 2543.44
+intructions/page    : 1833.33
+IPC                 : 0.7208
+
+--- State after first read pass ---
+
+=========== smaps for 0x3fb3879000 =========
+3fb3879000-3fb4879000 rw-p 00000000 00:00 0 
+Size:              16384 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:                   0 kB
+Pss:                   0 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:         0 kB
+Referenced:            0 kB
+Anonymous:             0 kB
+AnonHugePages:         0 kB
+VmFlags: rd wr mr mw me ac 
+
+============ Process Status =========
+VmSize:    17208 kB
+RssAnon:               0 kB
+RssFile:               0 kB
+RssShmem:            384 kB
+VmData:    16548 kB
+VmPTE:        60 kB
+
+========== first write pass: shared zero page -> private page ============
+pages               : 4096
+minor faults delta  : 4096
+major faults delta  : 0
+cycles              : 52769818
+instructions        : 21535052
+cycles/page         : 12883.26
+intructions/page    : 5257.58
+IPC                 : 0.4081
+
+--- State after write-protection faults ---
+
+=========== smaps for 0x3fb3879000 =========
+3fb3879000-3fb4879000 rw-p 00000000 00:00 0 
+Size:              16384 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:               16384 kB
+Pss:               16384 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:     16384 kB
+Referenced:        16384 kB
+Anonymous:         16384 kB
+AnonHugePages:         0 kB
+VmFlags: rd wr mr mw me ac 
+
+============ Process Status =========
+VmSize:    17208 kB
+RssAnon:           16384 kB
+RssFile:               0 kB
+RssShmem:            384 kB
+VmData:    16548 kB
+VmPTE:        60 kB
+
+========== second write pass: private writable pages ============
+pages               : 4096
+minor faults delta  : 0
+major faults delta  : 0
+cycles              : 519705
+instructions        : 71051
+cycles/page         : 126.88
+intructions/page    : 17.35
+IPC                 : 0.1367
+
+--- State after second write pass ---
+
+=========== smaps for 0x3fb3879000 =========
+3fb3879000-3fb4879000 rw-p 00000000 00:00 0 
+Size:              16384 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:               16384 kB
+Pss:               16384 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:     16384 kB
+Referenced:        16384 kB
+Anonymous:         16384 kB
+AnonHugePages:         0 kB
+VmFlags: rd wr mr mw me ac 
+
+============ Process Status =========
+VmSize:    17208 kB
+RssAnon:           16384 kB
+RssFile:               0 kB
+RssShmem:            384 kB
+VmData:    16548 kB
+VmPTE:        60 kB
+
+ read_sink            0
+
+
+~ # ./demand_paging write 16 |
+   >     tee stage2_direct_write_compare.txt
+PID             : 135
+mode            : write
+page size       : 4096 bytes
+mapping size    : 16 MiB
+page count      : 4096 
+mapping address         : 0x3f8f5ef000
+mmap minor faults       : 0
+mmap major faults       : 0
+mmap cycles             : 30525
+mmap instructions       : 14350
+
+--- State after mmap, before touching pages ---
+
+=========== smaps for 0x3f8f5ef000 =========
+3f8f5ef000-3f905ef000 rw-p 00000000 00:00 0 
+Size:              16384 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:                   0 kB
+Pss:                   0 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:         0 kB
+Referenced:            0 kB
+Anonymous:             0 kB
+AnonHugePages:         0 kB
+VmFlags: rd wr mr mw me ac 
+
+============ Process Status =========
+VmSize:    17208 kB
+RssAnon:               0 kB
+RssFile:               0 kB
+RssShmem:            384 kB
+VmData:    16548 kB
+VmPTE:        28 kB
+
+========== first write pass ============
+pages               : 4096
+minor faults delta  : 4096
+major faults delta  : 0
+cycles              : 49664859
+instructions        : 20172224
+cycles/page         : 12125.21
+intructions/page    : 4924.86
+IPC                 : 0.4062
+
+=========== smaps for 0x3f8f5ef000 =========
+3f8f5ef000-3f905ef000 rw-p 00000000 00:00 0 
+Size:              16384 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:               16384 kB
+Pss:               16384 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:     16384 kB
+Referenced:        16384 kB
+Anonymous:         16384 kB
+AnonHugePages:         0 kB
+VmFlags: rd wr mr mw me ac 
+
+============ Process Status =========
+VmSize:    17208 kB
+RssAnon:           16384 kB
+RssFile:               0 kB
+RssShmem:            384 kB
+VmData:    16548 kB
+VmPTE:        60 kB
+
+========== second write pass ============
+pages               : 4096
+minor faults delta  : 0
+major faults delta  : 0
+cycles              : 393921
+instructions        : 53460
+cycles/page         : 96.17
+intructions/page    : 13.05
+IPC                 : 0.1357
+
+=========== smaps for 0x3f8f5ef000 =========
+3f8f5ef000-3f905ef000 rw-p 00000000 00:00 0 
+Size:              16384 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:               16384 kB
+Pss:               16384 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:     16384 kB
+Referenced:        16384 kB
+Anonymous:         16384 kB
+AnonHugePages:         0 kB
+VmFlags: rd wr mr mw me ac 
+
+ read_sink            522240
+

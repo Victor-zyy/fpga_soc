@@ -1,0 +1,161 @@
+~ # ./mlock_test onfault 16 512 |
+>     tee stage2_7_mlock_onfault.txt
+PID                  : 83
+mode                 : onfault
+mapping address      : 0x3f9be00000
+address mod 2 MiB    : 0x0
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+partial pages        : 512
+partial size         : 2048 kB
+VmPTE baseline       : 24 kB
+RLIMIT_MEMLOCK soft  : 8388608 bytes
+RLIMIT_MEMLOCK hard  : 8388608 bytes
+
+========== state immediately after mmap ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+Locked               : 0 kB
+VmLck                : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== mlock2 MLOCK_ONFAULT ==========
+return value          : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 29513
+instructions         : 14436
+cycles/page          : 7.21
+instructions/page    : 3.52
+
+========== state immediately after MLOCK_ONFAULT ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+Locked               : 0 kB
+VmLck                : 16384 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd wr mr mw me lo lf ac 
+
+========== write only the partial range ==========
+return value          : 0
+minor faults         : 512
+major faults         : 0
+cycles               : 6211909
+instructions         : 2373975
+cycles/page          : 12132.63
+instructions/page    : 4636.67
+
+========== state after partial write ==========
+Size                 : 16384 kB
+Rss                  : 2048 kB
+Pss                  : 2048 kB
+Private_Dirty        : 2048 kB
+Referenced           : 2048 kB
+Anonymous            : 2048 kB
+Locked               : 2048 kB
+VmLck                : 16384 kB
+VmPTE                : 28 kB
+VmPTE delta          : 4 kB
+VmFlags              : rd wr mr mw me lo lf ac 
+
+========== write the remaining range ==========
+return value          : 0
+minor faults         : 3584
+major faults         : 0
+cycles               : 43520211
+instructions         : 17228428
+cycles/page          : 12142.92
+instructions/page    : 4807.04
+
+========== state after all pages are touched ==========
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+Locked               : 16384 kB
+VmLck                : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me lo lf ac 
+
+========== MADV_DONTNEED while locked ==========
+return value          : -1
+errno                 : 22 (Invalid argument)
+minor faults         : 0
+major faults         : 0
+cycles               : 28429
+instructions         : 27369
+cycles/page          : 6.94
+instructions/page    : 6.68
+
+========== state after rejected MADV_DONTNEED ==========
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+Locked               : 16384 kB
+VmLck                : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me lo lf ac 
+
+========== munlock ==========
+return value          : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 6213186
+instructions         : 4705672
+cycles/page          : 1516.89
+instructions/page    : 1148.85
+
+========== state immediately after munlock ==========
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+Locked               : 0 kB
+VmLck                : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== MADV_DONTNEED after munlock ==========
+return value          : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 11845804
+instructions         : 8802477
+cycles/page          : 2892.04
+instructions/page    : 2149.04
+
+========== state after successful MADV_DONTNEED ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+Locked               : 0 kB
+VmLck                : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+

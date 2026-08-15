@@ -1,0 +1,200 @@
+~ # ./pgt_lifetime |
+>     tee stage2_8_pgt_lifetime.txt
+PID                  : 90
+mapping address      : 0x3f40000000
+address mod 1 GiB    : 0x0
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+VmPTE baseline       : 24 kB
+
+========== 1. immediately after mmap ==========
+overlapping VMAs     : 1
+mapped Size          : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Anonymous            : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+maps:
+  3f40000000-3f41000000 rw-p 00000000 00:00 0 
+
+---------- 2. first write of all pages ----------
+pages touched        : 4096
+minor faults         : 4096
+major faults         : 0
+
+========== 2. after first write ==========
+overlapping VMAs     : 1
+mapped Size          : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Anonymous            : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+VmPTE                : 60 kB
+VmPTE delta          : 36 kB
+maps:
+  3f40000000-3f41000000 rw-p 00000000 00:00 0 
+
+---------- 3. MADV_DONTNEED entire mapping ----------
+return value          : 0
+minor faults         : 0
+major faults         : 0
+
+========== 3. after MADV_DONTNEED ==========
+overlapping VMAs     : 1
+mapped Size          : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Anonymous            : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+VmPTE                : 60 kB
+VmPTE delta          : 36 kB
+maps:
+  3f40000000-3f41000000 rw-p 00000000 00:00 0 
+
+---------- 4. write all pages again ----------
+pages touched        : 4096
+minor faults         : 4096
+major faults         : 0
+
+========== 4. after repopulating all pages ==========
+overlapping VMAs     : 1
+mapped Size          : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Anonymous            : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+VmPTE                : 60 kB
+VmPTE delta          : 36 kB
+maps:
+  3f40000000-3f41000000 rw-p 00000000 00:00 0 
+
+---------- 5. munmap one 4 KiB page ----------
+address               : 0x3f40100000
+length                : 4 kB
+return value          : 0
+minor faults         : 0
+major faults         : 0
+
+========== 5. after 4 KiB partial munmap ==========
+overlapping VMAs     : 2
+mapped Size          : 16380 kB
+Rss                  : 16380 kB
+Pss                  : 16380 kB
+Anonymous            : 16380 kB
+Private_Dirty        : 16380 kB
+Referenced           : 16380 kB
+VmPTE                : 60 kB
+VmPTE delta          : 36 kB
+maps:
+  3f40000000-3f40100000 rw-p 00000000 00:00 0 
+  3f40101000-3f41000000 rw-p 00000000 00:00 0 
+
+========== 6. after remapping 4 KiB, before touching ==========
+overlapping VMAs     : 1
+mapped Size          : 16384 kB
+Rss                  : 16380 kB
+Pss                  : 16380 kB
+Anonymous            : 16380 kB
+Private_Dirty        : 16380 kB
+Referenced           : 16380 kB
+VmPTE                : 60 kB
+VmPTE delta          : 36 kB
+maps:
+  3f40000000-3f41000000 rw-p 00000000 00:00 0 
+
+---------- 6. touch remapped 4 KiB page ----------
+pages touched        : 1
+minor faults         : 1
+major faults         : 0
+
+========== 6. after touching remapped 4 KiB ==========
+overlapping VMAs     : 1
+mapped Size          : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Anonymous            : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+VmPTE                : 60 kB
+VmPTE delta          : 36 kB
+maps:
+  3f40000000-3f41000000 rw-p 00000000 00:00 0 
+
+---------- 7. munmap aligned 4 MiB range ----------
+address               : 0x3f40400000
+length                : 4096 kB
+return value          : 0
+minor faults         : 0
+major faults         : 0
+
+========== 7. after aligned 4 MiB munmap ==========
+overlapping VMAs     : 2
+mapped Size          : 12288 kB
+Rss                  : 12288 kB
+Pss                  : 12288 kB
+Anonymous            : 12288 kB
+Private_Dirty        : 12288 kB
+Referenced           : 12288 kB
+VmPTE                : 52 kB
+VmPTE delta          : 28 kB
+maps:
+  3f40000000-3f40400000 rw-p 00000000 00:00 0 
+  3f40800000-3f41000000 rw-p 00000000 00:00 0 
+
+========== 8. after remapping 4 MiB, before touching ==========
+overlapping VMAs     : 1
+mapped Size          : 16384 kB
+Rss                  : 12288 kB
+Pss                  : 12288 kB
+Anonymous            : 12288 kB
+Private_Dirty        : 12288 kB
+Referenced           : 12288 kB
+VmPTE                : 52 kB
+VmPTE delta          : 28 kB
+maps:
+  3f40000000-3f41000000 rw-p 00000000 00:00 0 
+
+---------- 8. touch remapped 4 MiB range ----------
+pages touched        : 1024
+minor faults         : 1024
+major faults         : 0
+
+========== 8. after touching remapped 4 MiB ==========
+overlapping VMAs     : 1
+mapped Size          : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Anonymous            : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+VmPTE                : 60 kB
+VmPTE delta          : 36 kB
+maps:
+  3f40000000-3f41000000 rw-p 00000000 00:00 0 
+
+---------- 9. complete munmap of 16 MiB ----------
+address               : 0x3f40000000
+length                : 16384 kB
+return value          : 0
+minor faults         : 0
+major faults         : 0
+
+========== 9. after complete munmap ==========
+overlapping VMAs     : 0
+mapped Size          : 0 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Anonymous            : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+maps:
+

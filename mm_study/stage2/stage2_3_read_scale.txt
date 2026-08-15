@@ -1,0 +1,561 @@
+~ # chmod +x page_scale 
+~ # for pages in \
+>     0 1 2 \
+  >     511 512 513 \
+>     1023 1024 1025 \
+>     1536 2048 4096
+do> do
+>     echo
+  >     echo "===== read pages=$pages ====="
+>     ./page_scale read 16 "$pages"
+> done | tee stage2_3_read_scale.txt
+
+===== read pages=0 =====
+PID                  : 53
+mode                 : read
+page size            : 4096 bytes
+mapping size         : 16 MiB
+mapping address      : 0x3f9ee00000
+address mod 2 MiB    : 0x0
+total pages          : 4096
+touch pages          : 0
+touch bytes          : 0 kB
+
+========== before touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== measurement ==========
+minor faults delta   : 0
+major faults delta   : 0
+cycles               : 8947
+instructions         : 22303
+
+========== after touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== deltas ==========
+Rss delta            : 0 kB
+Pss delta            : 0 kB
+Private_Dirty delta  : 0 kB
+Anonymous delta      : 0 kB
+VmPTE delta          : 0 kB
+read_sink            : 0
+
+===== read pages=1 =====
+PID                  : 54
+mode                 : read
+page size            : 4096 bytes
+mapping size         : 16 MiB
+mapping address      : 0x3fab800000
+address mod 2 MiB    : 0x0
+total pages          : 4096
+touch pages          : 1
+touch bytes          : 4 kB
+
+========== before touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== measurement ==========
+minor faults delta   : 1
+major faults delta   : 0
+cycles               : 29574
+instructions         : 13314
+cycles/page          : 29574.00
+instructions/page    : 13314.00
+IPC                  : 0.4502
+
+========== after touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 28 kB
+
+========== deltas ==========
+Rss delta            : 0 kB
+Pss delta            : 0 kB
+Private_Dirty delta  : 0 kB
+Anonymous delta      : 0 kB
+VmPTE delta          : 4 kB
+read_sink            : 0
+
+===== read pages=2 =====
+PID                  : 55
+mode                 : read
+page size            : 4096 bytes
+mapping size         : 16 MiB
+mapping address      : 0x3fab400000
+address mod 2 MiB    : 0x0
+total pages          : 4096
+touch pages          : 2
+touch bytes          : 8 kB
+
+========== before touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== measurement ==========
+minor faults delta   : 2
+major faults delta   : 0
+cycles               : 38894
+instructions         : 19547
+cycles/page          : 19447.00
+instructions/page    : 9773.50
+IPC                  : 0.5026
+
+========== after touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 28 kB
+
+========== deltas ==========
+Rss delta            : 0 kB
+Pss delta            : 0 kB
+Private_Dirty delta  : 0 kB
+Anonymous delta      : 0 kB
+VmPTE delta          : 4 kB
+read_sink            : 0
+
+===== read pages=511 =====
+PID                  : 56
+mode                 : read
+page size            : 4096 bytes
+mapping size         : 16 MiB
+mapping address      : 0x3f98c00000
+address mod 2 MiB    : 0x0
+total pages          : 4096
+touch pages          : 511
+touch bytes          : 2044 kB
+
+========== before touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== measurement ==========
+minor faults delta   : 511
+major faults delta   : 0
+cycles               : 1367287
+instructions         : 955030
+cycles/page          : 2675.71
+instructions/page    : 1868.94
+IPC                  : 0.6985
+
+========== after touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 28 kB
+
+========== deltas ==========
+Rss delta            : 0 kB
+Pss delta            : 0 kB
+Private_Dirty delta  : 0 kB
+Anonymous delta      : 0 kB
+VmPTE delta          : 4 kB
+read_sink            : 0
+
+===== read pages=512 =====
+PID                  : 57
+mode                 : read
+page size            : 4096 bytes
+mapping size         : 16 MiB
+mapping address      : 0x3f88e00000
+address mod 2 MiB    : 0x0
+total pages          : 4096
+touch pages          : 512
+touch bytes          : 2048 kB
+
+========== before touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== measurement ==========
+minor faults delta   : 512
+major faults delta   : 0
+cycles               : 1387354
+instructions         : 962992
+cycles/page          : 2709.68
+instructions/page    : 1880.84
+IPC                  : 0.6941
+
+========== after touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 28 kB
+
+========== deltas ==========
+Rss delta            : 0 kB
+Pss delta            : 0 kB
+Private_Dirty delta  : 0 kB
+Anonymous delta      : 0 kB
+VmPTE delta          : 4 kB
+read_sink            : 0
+
+===== read pages=513 =====
+PID                  : 58
+mode                 : read
+page size            : 4096 bytes
+mapping size         : 16 MiB
+mapping address      : 0x3f8e800000
+address mod 2 MiB    : 0x0
+total pages          : 4096
+touch pages          : 513
+touch bytes          : 2052 kB
+
+========== before touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== measurement ==========
+minor faults delta   : 513
+major faults delta   : 0
+cycles               : 1408848
+instructions         : 967529
+cycles/page          : 2746.29
+instructions/page    : 1886.02
+IPC                  : 0.6868
+
+========== after touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 32 kB
+
+========== deltas ==========
+Rss delta            : 0 kB
+Pss delta            : 0 kB
+Private_Dirty delta  : 0 kB
+Anonymous delta      : 0 kB
+VmPTE delta          : 8 kB
+read_sink            : 0
+
+===== read pages=1023 =====
+PID                  : 59
+mode                 : read
+page size            : 4096 bytes
+mapping size         : 16 MiB
+mapping address      : 0x3fb1600000
+address mod 2 MiB    : 0x0
+total pages          : 4096
+touch pages          : 1023
+touch bytes          : 4092 kB
+
+========== before touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== measurement ==========
+minor faults delta   : 1023
+major faults delta   : 0
+cycles               : 2664341
+instructions         : 1897272
+cycles/page          : 2604.44
+instructions/page    : 1854.62
+IPC                  : 0.7121
+
+========== after touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 32 kB
+
+========== deltas ==========
+Rss delta            : 0 kB
+Pss delta            : 0 kB
+Private_Dirty delta  : 0 kB
+Anonymous delta      : 0 kB
+VmPTE delta          : 8 kB
+read_sink            : 0
+
+===== read pages=1024 =====
+PID                  : 60
+mode                 : read
+page size            : 4096 bytes
+mapping size         : 16 MiB
+mapping address      : 0x3fb5000000
+address mod 2 MiB    : 0x0
+total pages          : 4096
+touch pages          : 1024
+touch bytes          : 4096 kB
+
+========== before touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== measurement ==========
+minor faults delta   : 1024
+major faults delta   : 0
+cycles               : 2649031
+instructions         : 1886429
+cycles/page          : 2586.94
+instructions/page    : 1842.22
+IPC                  : 0.7121
+
+========== after touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 32 kB
+
+========== deltas ==========
+Rss delta            : 0 kB
+Pss delta            : 0 kB
+Private_Dirty delta  : 0 kB
+Anonymous delta      : 0 kB
+VmPTE delta          : 8 kB
+read_sink            : 0
+
+===== read pages=1025 =====
+PID                  : 61
+mode                 : read
+page size            : 4096 bytes
+mapping size         : 16 MiB
+mapping address      : 0x3faac00000
+address mod 2 MiB    : 0x0
+total pages          : 4096
+touch pages          : 1025
+touch bytes          : 4100 kB
+
+========== before touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== measurement ==========
+minor faults delta   : 1025
+major faults delta   : 0
+cycles               : 2667502
+instructions         : 1893398
+cycles/page          : 2602.44
+instructions/page    : 1847.22
+IPC                  : 0.7098
+
+========== after touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 36 kB
+
+========== deltas ==========
+Rss delta            : 0 kB
+Pss delta            : 0 kB
+Private_Dirty delta  : 0 kB
+Anonymous delta      : 0 kB
+VmPTE delta          : 12 kB
+read_sink            : 0
+
+===== read pages=1536 =====
+PID                  : 62
+mode                 : read
+page size            : 4096 bytes
+mapping size         : 16 MiB
+mapping address      : 0x3f8f400000
+address mod 2 MiB    : 0x0
+total pages          : 4096
+touch pages          : 1536
+touch bytes          : 6144 kB
+
+========== before touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== measurement ==========
+minor faults delta   : 1536
+major faults delta   : 0
+cycles               : 3884084
+instructions         : 2802285
+cycles/page          : 2528.70
+instructions/page    : 1824.40
+IPC                  : 0.7215
+
+========== after touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 36 kB
+
+========== deltas ==========
+Rss delta            : 0 kB
+Pss delta            : 0 kB
+Private_Dirty delta  : 0 kB
+Anonymous delta      : 0 kB
+VmPTE delta          : 12 kB
+read_sink            : 0
+
+===== read pages=2048 =====
+PID                  : 63
+mode                 : read
+page size            : 4096 bytes
+mapping size         : 16 MiB
+mapping address      : 0x3f97c00000
+address mod 2 MiB    : 0x0
+total pages          : 4096
+touch pages          : 2048
+touch bytes          : 8192 kB
+
+========== before touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== measurement ==========
+minor faults delta   : 2048
+major faults delta   : 0
+cycles               : 5135713
+instructions         : 3738910
+cycles/page          : 2507.67
+instructions/page    : 1825.64
+IPC                  : 0.7280
+
+========== after touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 40 kB
+
+========== deltas ==========
+Rss delta            : 0 kB
+Pss delta            : 0 kB
+Private_Dirty delta  : 0 kB
+Anonymous delta      : 0 kB
+VmPTE delta          : 16 kB
+read_sink            : 0
+
+===== read pages=4096 =====
+PID                  : 64
+mode                 : read
+page size            : 4096 bytes
+mapping size         : 16 MiB
+mapping address      : 0x3f7fc00000
+address mod 2 MiB    : 0x0
+total pages          : 4096
+touch pages          : 4096
+touch bytes          : 16384 kB
+
+========== before touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+
+========== measurement ==========
+minor faults delta   : 4096
+major faults delta   : 0
+cycles               : 10229138
+instructions         : 7452971
+cycles/page          : 2497.35
+instructions/page    : 1819.57
+IPC                  : 0.7286
+
+========== after touching ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 60 kB
+
+========== deltas ==========
+Rss delta            : 0 kB
+Pss delta            : 0 kB
+Private_Dirty delta  : 0 kB
+Anonymous delta      : 0 kB
+VmPTE delta          : 36 kB
+read_sink            : 0
+

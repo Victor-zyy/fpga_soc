@@ -1,0 +1,42 @@
+~ # echo 2 > /proc/sys/kernel/perf_user_access
+~ # sysctl 
+~ # ./demand_paging untouched 16 |
+>     tee stage2_untouched.txt
+PID             : 68
+mode            : untouched
+page size       : 4096 bytes
+mapping size    : 16 MiB
+page count      : 4096 
+mapping address         : 0x3f882f2000
+mmap minor faults       : 0
+mmap major faults       : 0
+mmap cycles             : 0
+
+--- State after mmap, before touching pages ---
+
+=========== smaps for 0x3f882f2000 =========
+3f882f2000-3f892f2000 rw-p 00000000 00:00 0 
+Size:              16384 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:                   0 kB
+Pss:                   0 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:         0 kB
+Referenced:            0 kB
+Anonymous:             0 kB
+AnonHugePages:         0 kB
+VmFlags: rd wr mr mw me ac 
+
+============ Process Status =========
+VmSize:    17204 kB
+RssAnon:               0 kB
+RssFile:               0 kB
+RssShmem:            384 kB
+VmData:    16548 kB
+VmPTE:        28 kB
+
+read_sink            0
+

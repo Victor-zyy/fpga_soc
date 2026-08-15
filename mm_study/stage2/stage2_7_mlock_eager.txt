@@ -1,0 +1,139 @@
+~ # ./mlock_test eager 16 |
+  >     tee stage2_7_mlock_eager.txt
+PID                  : 81
+mode                 : eager
+mapping address      : 0x3f86c00000
+address mod 2 MiB    : 0x0
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+partial pages        : 512
+partial size         : 2048 kB
+VmPTE baseline       : 24 kB
+RLIMIT_MEMLOCK soft  : 8388608 bytes
+RLIMIT_MEMLOCK hard  : 8388608 bytes
+
+========== state immediately after mmap ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+Locked               : 0 kB
+VmLck                : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== mlock: eager population and locking ==========
+return value          : 0
+minor faults         : 4096
+major faults         : 0
+cycles               : 51890489
+instructions         : 21455278
+cycles/page          : 12668.58
+instructions/page    : 5238.10
+
+========== state immediately after mlock ==========
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+Locked               : 16384 kB
+VmLck                : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me lo ac 
+
+========== first user write after mlock ==========
+return value          : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 466267
+instructions         : 67065
+cycles/page          : 113.83
+instructions/page    : 16.37
+
+========== state after first user write ==========
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+Locked               : 16384 kB
+VmLck                : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me lo ac 
+
+========== MADV_DONTNEED while locked ==========
+return value          : -1
+errno                 : 22 (Invalid argument)
+minor faults         : 0
+major faults         : 0
+cycles               : 14706
+instructions         : 19922
+cycles/page          : 3.59
+instructions/page    : 4.86
+
+========== state after rejected MADV_DONTNEED ==========
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+Locked               : 16384 kB
+VmLck                : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me lo ac 
+
+========== munlock ==========
+return value          : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 6307923
+instructions         : 4716585
+cycles/page          : 1540.02
+instructions/page    : 1151.51
+
+========== state immediately after munlock ==========
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+Locked               : 0 kB
+VmLck                : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== MADV_DONTNEED after munlock ==========
+return value          : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 11657611
+instructions         : 8761724
+cycles/page          : 2846.10
+instructions/page    : 2139.09
+
+========== state after successful MADV_DONTNEED ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+Locked               : 0 kB
+VmLck                : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+

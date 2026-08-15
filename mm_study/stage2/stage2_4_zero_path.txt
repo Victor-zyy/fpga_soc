@@ -1,0 +1,104 @@
+~ # ./access_cost zero-path 16 100 |
+ >     tee stage2_4_zero_path.txt
+PID                  : 84
+mode                 : zero-path
+mapping address      : 0x3f9a600000
+address mod 2 MiB    : 0x0
+mapping size         : 16 MiB
+pages                : 4096
+hot repeats          : 100
+hot operations       : 409600
+
+========== empty baseline: one pass ==========
+operations           : 4096
+minor faults         : 0
+major faults         : 0
+cycles               : 33199
+instructions         : 46838
+raw cycles/op        : 8.11
+raw instructions/op  : 11.44
+approximate IPC      : 1.4108
+
+========== empty baseline: repeated passes ==========
+operations           : 409600
+minor faults         : 0
+major faults         : 0
+cycles               : 2657100
+instructions         : 2569607
+raw cycles/op        : 6.49
+raw instructions/op  : 6.27
+approximate IPC      : 0.9671
+
+========== first read: missing PTE -> zero page ==========
+operations           : 4096
+minor faults         : 4096
+major faults         : 0
+cycles               : 10297806
+instructions         : 7422287
+raw cycles/op        : 2514.11
+raw instructions/op  : 1812.08
+baseline cycles      : 33199
+baseline instructions: 46838
+net cycles/op        : 2506.01
+net instructions/op  : 1800.65
+approximate IPC      : 0.7208
+
+========== hot zero-page read ==========
+operations           : 409600
+minor faults         : 0
+major faults         : 0
+cycles               : 7452305
+instructions         : 2312986
+raw cycles/op        : 18.19
+raw instructions/op  : 5.65
+baseline cycles      : 2657100
+baseline instructions: 2569607
+net cycles/op        : 11.71
+net instructions/op  : -0.63
+approximate IPC      : 0.3104
+
+========== first write: zero page -> private page ==========
+operations           : 4096
+minor faults         : 4096
+major faults         : 0
+cycles               : 52457540
+instructions         : 21439933
+raw cycles/op        : 12807.02
+raw instructions/op  : 5234.36
+baseline cycles      : 33199
+baseline instructions: 46838
+net cycles/op        : 12798.91
+net instructions/op  : 5222.92
+approximate IPC      : 0.4087
+
+========== hot private-page write ==========
+operations           : 409600
+minor faults         : 0
+major faults         : 0
+cycles               : 35228375
+instructions         : 3642495
+raw cycles/op        : 86.01
+raw instructions/op  : 8.89
+baseline cycles      : 2657100
+baseline instructions: 2569607
+net cycles/op        : 79.52
+net instructions/op  : 2.62
+approximate IPC      : 0.1034
+
+========== hot private-page read ==========
+operations           : 409600
+minor faults         : 0
+major faults         : 0
+cycles               : 29325224
+instructions         : 3047372
+raw cycles/op        : 71.59
+raw instructions/op  : 7.44
+baseline cycles      : 2657100
+baseline instructions: 2569607
+net cycles/op        : 65.11
+net instructions/op  : 1.17
+approximate IPC      : 0.1039
+
+read_sink            : 52224000
+empty_sink           : 0x0
+

@@ -1,0 +1,109 @@
+~ # ./dontneed_test 16 |
+>     tee stage2_6_dontneed.txt
+PID                  : 71
+mapping address      : 0x3f860a8000
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+expected pattern sum : 509256
+VmPTE baseline       : 24 kB
+
+========== state immediately after mmap ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+
+========== first write: allocate private pages ==========
+minor faults         : 4096
+major faults         : 0
+cycles               : 49544838
+instructions         : 20210405
+cycles/page          : 12095.91
+instructions/page    : 4934.18
+value/sum            : 0
+
+========== state after first write ==========
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+========== verify data before MADV_DONTNEED ==========
+minor faults         : 0
+major faults         : 0
+cycles               : 449361
+instructions         : 75465
+cycles/page          : 109.71
+instructions/page    : 18.42
+value/sum            : 509256
+pattern valid before : yes
+
+========== madvise MADV_DONTNEED ==========
+minor faults         : 0
+major faults         : 0
+cycles               : 11638245
+instructions         : 8766626
+cycles/page          : 2841.37
+instructions/page    : 2140.29
+value/sum            : 0
+
+========== state immediately after MADV_DONTNEED ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+========== first read after MADV_DONTNEED ==========
+minor faults         : 4096
+major faults         : 0
+cycles               : 8165237
+instructions         : 5849224
+cycles/page          : 1993.47
+instructions/page    : 1428.03
+value/sum            : 0
+all zero after discard: yes
+
+========== state after first read following discard ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+========== first write after zero-page reads ==========
+minor faults         : 4096
+major faults         : 0
+cycles               : 51700716
+instructions         : 21386958
+cycles/page          : 12622.25
+instructions/page    : 5221.43
+value/sum            : 0
+
+========== state after private pages are allocated again ==========
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+read_sink            : 509256
+

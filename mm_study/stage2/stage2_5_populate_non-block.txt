@@ -1,0 +1,48 @@
+~ # ./populate_test populate-rw-nonblock 16 |
+>     tee stage2_5_populate_nonblock.txt
+PID                  : 60
+mode                 : populate-rw-nonblock
+mapping address      : 0x3f957e8000
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+VmPTE baseline       : 24 kB
+
+========== mmap measurement ==========
+minor faults         : 0
+major faults         : 0
+cycles               : 30988
+instructions         : 14325
+cycles/page          : 7.57
+instructions/page    : 3.50
+
+========== state immediately after mmap ==========
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+
+========== first user write pass ==========
+minor faults         : 4096
+major faults         : 0
+cycles               : 49733957
+instructions         : 20174708
+cycles/page          : 12142.08
+instructions/page    : 4925.47
+
+========== state after first user access ==========
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+read_sink            : 0
+

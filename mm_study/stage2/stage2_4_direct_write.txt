@@ -1,0 +1,76 @@
+~ # ./access_cost direct-write 16 100 |
+>     tee stage2_4_direct_write.txt
+PID                  : 86
+mode                 : direct-write
+mapping address      : 0x3f7ea00000
+address mod 2 MiB    : 0x0
+mapping size         : 16 MiB
+pages                : 4096
+hot repeats          : 100
+hot operations       : 409600
+
+========== empty baseline: one pass ==========
+operations           : 4096
+minor faults         : 0
+major faults         : 0
+cycles               : 33013
+instructions         : 34270
+raw cycles/op        : 8.06
+raw instructions/op  : 8.37
+approximate IPC      : 1.0381
+
+========== empty baseline: repeated passes ==========
+operations           : 409600
+minor faults         : 0
+major faults         : 0
+cycles               : 2614542
+instructions         : 2554260
+raw cycles/op        : 6.38
+raw instructions/op  : 6.24
+approximate IPC      : 0.9769
+
+========== first write: missing PTE -> private page ==========
+operations           : 4096
+minor faults         : 4096
+major faults         : 0
+cycles               : 49602149
+instructions         : 20136587
+raw cycles/op        : 12109.90
+raw instructions/op  : 4916.16
+baseline cycles      : 33013
+baseline instructions: 34270
+net cycles/op        : 12101.84
+net instructions/op  : 4907.79
+approximate IPC      : 0.4060
+
+========== hot private-page write ==========
+operations           : 409600
+minor faults         : 0
+major faults         : 0
+cycles               : 35284889
+instructions         : 3659167
+raw cycles/op        : 86.14
+raw instructions/op  : 8.93
+baseline cycles      : 2614542
+baseline instructions: 2554260
+net cycles/op        : 79.76
+net instructions/op  : 2.70
+approximate IPC      : 0.1037
+
+========== hot private-page read ==========
+operations           : 409600
+minor faults         : 0
+major faults         : 0
+cycles               : 29215084
+instructions         : 3024347
+raw cycles/op        : 71.33
+raw instructions/op  : 7.38
+baseline cycles      : 2614542
+baseline instructions: 2554260
+net cycles/op        : 64.94
+net instructions/op  : 1.15
+approximate IPC      : 0.1035
+
+read_sink            : 52224000
+empty_sink           : 0x0
+
