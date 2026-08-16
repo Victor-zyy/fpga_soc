@@ -1,0 +1,98 @@
+~ # ./file_private_cow 16 512 |
+>     tee stage3_1_file_private_cow.txt
+PID                  : 97
+file                 : /file_private_cow_97.bin
+mapping address      : 0x3f8cec5000
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+COW pages            : 512
+COW size             : 2048 kB
+expected original sum: 509256
+expected private sum : 510612
+VmPTE baseline       : 24 kB
+
+========== state immediately after mmap ==========
+mapping              : 3f8cec5000-3f8dec5000 rw-p 00000000 00:02 446                            /file_private_cow_97.bin
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd wr mr mw me ac 
+mincore resident     : 4096 / 4096 pages
+
+========== first read of MAP_PRIVATE file mapping ==========
+minor faults         : 257
+major faults         : 0
+cycles               : 6456729
+instructions         : 4255391
+cycles/page          : 1576.35
+instructions/page    : 1038.91
+value/sum            : 509256
+initial mapping valid: yes
+
+========== state after first read ==========
+mapping              : 3f8cec5000-3f8dec5000 rw-p 00000000 00:02 446                            /file_private_cow_97.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+mincore resident     : 4096 / 4096 pages
+
+========== first private write: file page to anonymous COW ==========
+minor faults         : 512
+major faults         : 0
+cycles               : 10114258
+instructions         : 3431732
+cycles/page          : 19754.41
+instructions/page    : 6702.60
+value/sum            : 0
+
+========== state after partial private COW ==========
+mapping              : 3f8cec5000-3f8dec5000 rw-p 00000000 00:02 446                            /file_private_cow_97.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 2048 kB = 512pages x 4Kb 
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== read mapping after private COW ==========
+minor faults         : 0
+major faults         : 0
+cycles               : 381768
+instructions         : 52842
+cycles/page          : 93.21
+instructions/page    : 12.90
+value/sum            : 510612
+
+========== content verification ==========
+mapping sum          : 510612
+expected mapping sum : 510612
+mapping COW valid    : yes
+file sum             : 509256
+expected file sum    : 509256
+original file intact : yes
+read_sink            : 1019868
+

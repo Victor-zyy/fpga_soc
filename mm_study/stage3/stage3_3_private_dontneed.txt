@@ -1,0 +1,207 @@
+~ # ./file_private_dontneed 16 512 |
+  >     tee stage3_3_private_dontneed.txt
+PID                  : 119
+file                 : /file_private_dontneed_119.bin
+mapping address      : 0x3f9ae00000
+address mod 2 MiB    : 0x0
+mapping size         : 16 MiB
+pages                : 4096
+COW pages            : 512
+COW size             : 2048 kB
+VmPTE baseline       : 24 kB
+
+========== 1. immediately after mmap ==========
+mapping              : 3f9ae00000-3f9be00000 rw-p 00000000 00:02 453                            /file_private_dontneed_119.bin
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd wr mr mw me ac 
+mincore resident     : 4096 / 4096 pages
+
+========== 2. first read of all file pages ==========
+return value          : 0
+minor faults         : 256
+major faults         : 0
+cycles               : 6427216
+instructions         : 4262147
+cycles/page          : 1569.14
+instructions/page    : 1040.56
+offset 0 sum         : 509256
+offset 1 sum         : 509256
+
+========== 2. initial mapping verification ==========
+offset 0 sum         : 509256
+expected offset 0    : 509256
+offset 1 sum         : 509256
+expected offset 1    : 509256
+signature valid      : yes
+
+========== 2. state after first read ==========
+mapping              : 3f9ae00000-3f9be00000 rw-p 00000000 00:02 453                            /file_private_dontneed_119.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 3. first private COW writes ==========
+return value          : 0
+minor faults         : 512
+major faults         : 0
+cycles               : 10073097
+instructions         : 3448977
+cycles/page          : 19674.02
+instructions/page    : 6736.28
+offset 0 sum         : 0
+offset 1 sum         : 0
+
+========== 3. state after first private COW ==========
+mapping              : 3f9ae00000-3f9be00000 rw-p 00000000 00:02 453                            /file_private_dontneed_119.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 2048 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 4. backing file rewritten ==========
+rewritten pages      : 512
+rewritten size       : 2048 kB
+
+========== 4. private mapping before discard ==========
+offset 0 sum         : 64663
+expected offset 0    : 64663
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 4. backing file after rewrite ==========
+offset 0 sum         : 65897
+expected offset 0    : 65897
+offset 1 sum         : 65897
+expected offset 1    : 65897
+signature valid      : yes
+
+========== 5. MADV_DONTNEED on COW range ==========
+return value          : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 1268741
+instructions         : 936707
+cycles/page          : 2478.01
+instructions/page    : 1829.51
+offset 0 sum         : 0
+offset 1 sum         : 0
+
+========== 5. state immediately after MADV_DONTNEED ==========
+mapping              : 3f9ae00000-3f9be00000 rw-p 00000000 00:02 453                            /file_private_dontneed_119.bin
+Size                 : 16384 kB
+Rss                  : 14336 kB
+Pss                  : 14336 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 14336 kB
+Referenced           : 14336 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+mincore resident     : 4096 / 4096 pages
+
+========== 6. first read after MADV_DONTNEED ==========
+return value          : 0
+minor faults         : 32
+major faults         : 0
+cycles               : 1022550
+instructions         : 617162
+cycles/page          : 1997.17
+instructions/page    : 1205.39
+offset 0 sum         : 65897
+offset 1 sum         : 65897
+
+========== 6. mapping reloaded from current file ==========
+offset 0 sum         : 65897
+expected offset 0    : 65897
+offset 1 sum         : 65897
+expected offset 1    : 65897
+signature valid      : yes
+
+========== 6. state after file pages are mapped again ==========
+mapping              : 3f9ae00000-3f9be00000 rw-p 00000000 00:02 453                            /file_private_dontneed_119.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 7. second private COW writes ==========
+return value          : 0
+minor faults         : 512
+major faults         : 0
+cycles               : 11399821
+instructions         : 3914563
+cycles/page          : 22265.28
+instructions/page    : 7645.63
+offset 0 sum         : 0
+offset 1 sum         : 0
+
+========== 7. state after second private COW ==========
+mapping              : 3f9ae00000-3f9be00000 rw-p 00000000 00:02 453                            /file_private_dontneed_119.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 2048 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 7. second COW copied current file contents ==========
+offset 0 sum         : 64663
+expected offset 0    : 64663
+offset 1 sum         : 65897
+expected offset 1    : 65897
+signature valid      : yes
+
+========== 7. backing file remains unchanged by COW ==========
+offset 0 sum         : 65897
+expected offset 0    : 65897
+offset 1 sum         : 65897
+expected offset 1    : 65897
+signature valid      : yes
+
+read_sink            : 1408836
+

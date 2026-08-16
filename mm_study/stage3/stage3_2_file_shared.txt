@@ -1,0 +1,166 @@
+f~ # ./file_shared_visibility 16 512 |
+  >     tee stage3_2_file_shared.txt
+PID                  : 109
+file                 : /file_shared_visibility_109.bin
+shared_rw address    : 0x3faaca5000
+shared_ro address    : 0x3fa9ca5000
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+changed pages        : 512
+changed size         : 2048 kB
+expected original sum: 509256
+expected shared sum  : 511846
+VmPTE baseline       : 24 kB
+
+========== shared_rw immediately after mmap ==========
+mapping              : 3faaca5000-3fabca5000 rw-s 00000000 00:02 449                            /file_shared_visibility_109.bin
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd wr sh mr mw me ms 
+
+========== shared_ro immediately after mmap ==========
+mapping              : 3fa9ca5000-3faaca5000 r--s 00000000 00:02 449                            /file_shared_visibility_109.bin
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd sh mr mw me ms 
+shared_rw mincore    : 4096 / 4096 pages
+shared_ro mincore    : 4096 / 4096 pages
+
+========== first read through shared_rw ==========
+return value          : 0
+minor faults         : 257
+major faults         : 0
+cycles               : 6444233
+instructions         : 4250192
+cycles/op            : 1573.30
+instructions/op      : 1037.64
+value/sum            : 509256
+
+========== first read through shared_ro ==========
+return value          : 0
+minor faults         : 257
+major faults         : 0
+cycles               : 4845480
+instructions         : 3001316
+cycles/op            : 1182.98
+instructions/op      : 732.74
+value/sum            : 509256
+shared_rw initial valid: yes
+shared_ro initial valid: yes
+
+========== shared_rw after both mappings are read ==========
+mapping              : 3faaca5000-3fabca5000 rw-s 00000000 00:02 449                            /file_shared_visibility_109.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 8192 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 16384 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 16384 kB
+Anonymous            : 0 kB
+VmPTE                : 88 kB
+VmPTE delta          : 64 kB
+VmFlags              : rd wr sh mr mw me ms 
+
+========== shared_ro after both mappings are read ==========
+mapping              : 3fa9ca5000-3faaca5000 r--s 00000000 00:02 449                            /file_shared_visibility_109.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 8192 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 16384 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 16384 kB
+Anonymous            : 0 kB
+VmPTE                : 88 kB
+VmPTE delta          : 64 kB
+VmFlags              : rd sh mr mw me ms 
+
+========== first shared writes through shared_rw ==========
+return value          : 0
+minor faults         : 512
+major faults         : 0
+cycles               : 1081627
+instructions         : 686172
+cycles/op            : 2112.55
+instructions/op      : 1340.18
+value/sum            : 0
+
+========== shared_rw after shared writes ==========
+mapping              : 3faaca5000-3fabca5000 rw-s 00000000 00:02 449                            /file_shared_visibility_109.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 8192 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 16384 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 16384 kB
+Anonymous            : 0 kB
+VmPTE                : 88 kB
+VmPTE delta          : 64 kB
+VmFlags              : rd wr sh mr mw me ms 
+
+========== shared_ro after shared writes ==========
+mapping              : 3fa9ca5000-3faaca5000 r--s 00000000 00:02 449                            /file_shared_visibility_109.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 8192 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 16384 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 16384 kB
+Anonymous            : 0 kB
+VmPTE                : 88 kB
+VmPTE delta          : 64 kB
+VmFlags              : rd sh mr mw me ms 
+
+========== visibility before msync ==========
+shared_ro sum        : 511846
+expected shared sum  : 511846
+other mapping sees writes: yes
+pread file sum       : 511846
+pread sees writes    : yes
+
+========== msync MS_SYNC ==========
+return value          : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 12731
+instructions         : 10416
+cycles/op            : 3.11
+instructions/op      : 2.54
+value/sum            : 0
+
+========== visibility after msync ==========
+shared_ro sum        : 511846
+expected shared sum  : 511846
+other mapping valid  : yes
+pread file sum       : 511846
+file content valid   : yes
+Anonymous shared_rw  : 0 kB
+Anonymous shared_ro  : 0 kB
+read_sink            : 2042204
+

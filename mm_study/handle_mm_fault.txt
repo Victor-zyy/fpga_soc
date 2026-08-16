@@ -1,0 +1,43 @@
+                         handle_mm_fault()
+                                │
+                                ▼
+                         handle_pte_fault()
+                                │
+              ┌─────────────────┴─────────────────┐
+              │                                   │
+           PTE none                         PTE present
+              │                                   │
+              ▼                                   │
+       do_pte_missing()                    write && W=0
+              │                                   │
+       ┌──────┴──────┐                            ▼
+       │             │                       do_wp_page()
+       │             │                            │
+ anonymous VMA   file/non-anon VMA                │
+       │             │                            ▼
+       ▼             ▼                 vm_normal_page()
+do_anonymous       do_fault()          取得当前 PTE 对应 page/folio
+_page()              │                            │
+                     │                 ┌──────────┴──────────┐
+            ┌────────┼─────────┐       │                     │
+            │        │         │    shared VMA           private VMA
+            │        │         │       │                     │
+           read    private    shared    ▼                     ▼
+                    write     write  wp_page_shared()    当前 folio 类型？
+            │        │         │       │                  /          \
+            ▼        ▼         ▼       │                 /            \
+       do_read_   do_cow_   do_shared_ │        anonymous folio      non-anon
+        fault()    fault()    fault()   │              │                 │
+                                       │        ┌─────┴─────┐           │
+                                       │        │           │           │
+                                       │    exclusive   not exclusive    │
+                                       │        │       / still shared   │
+                                       │        │           │           │
+                                       ▼        ▼           ▼           ▼
+                                  same page   reuse      COW copy    COW copy
+                                  writable      │           │           │
+                                  + dirty       │           │           │
+                                                ▼           ▼           ▼
+                                           原 anon page   new anon    new anon
+                                           PTE → RW       page        page
+

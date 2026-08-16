@@ -1,0 +1,215 @@
+~ # ./rootfs_file_lifetime 16 nodrop |
+   >     tee stage3_5_lifetime_nodrop.txt
+filesystem type      : tmpfs
+filesystem magic     : 0x1021994
+PID                  : 132
+path                 : /rootfs_file_lifetime_132.bin
+mapping address      : 0x3f93db8000
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+drop_caches mode     : disabled
+VmPTE baseline       : 24 kB
+
+========== 1. old file before unlink ==========
+device               : 0:2
+inode                : 458
+link count           : 1
+size                 : 16777216 bytes
+
+========== 1. mapping immediately after mmap ==========
+mapping              : 3f93db8000-3f94db8000 r--s 00000000 00:02 458                            /rootfs_file_lifetime_132.bin
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd sh mr mw me ms 
+mincore resident     : 4096 / 4096 pages
+
+========== 2. first read of old mapping ==========
+return value          : 0
+minor faults         : 257
+major faults         : 0
+cycles               : 6553205
+instructions         : 4302267
+cycles/page          : 1599.90
+instructions/page    : 1050.36
+offset 0 sum         : 509256
+offset 1 sum         : 509256
+
+========== 2. old mapping contents ==========
+offset 0 sum         : 509256
+expected offset 0    : 509256
+offset 1 sum         : 509256
+expected offset 1    : 509256
+signature valid      : yes
+
+========== 3. after unlink old pathname ==========
+path lookup          : missing
+path errno           : 2 (No such file or directory)
+
+========== 3. old fd after unlink ==========
+device               : 0:2
+inode                : 458
+link count           : 0
+size                 : 16777216 bytes
+
+========== 3. old mapping after unlink ==========
+mapping              : 3f93db8000-3f94db8000 r--s 00000000 00:02 458                            /rootfs_file_lifetime_132.bin (deleted)
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd sh mr mw me ms 
+
+========== 4. replacement file at same pathname ==========
+device               : 0:2
+inode                : 460
+link count           : 1
+size                 : 16777216 bytes
+old inode            : 458
+new inode            : 460
+different inode      : yes
+
+========== 4. unlinked old fd still sees old file ==========
+offset 0 sum         : 509256
+expected offset 0    : 509256
+offset 1 sum         : 509256
+expected offset 1    : 509256
+signature valid      : yes
+
+========== 4. old mapping still sees old file ==========
+offset 0 sum         : 509256
+expected offset 0    : 509256
+offset 1 sum         : 509256
+expected offset 1    : 509256
+signature valid      : yes
+
+========== 4. same pathname now contains new file ==========
+offset 0 sum         : 527864
+expected offset 0    : 527864
+offset 1 sum         : 527864
+expected offset 1    : 527864
+signature valid      : yes
+
+========== 5. MADV_DONTNEED old mapping ==========
+return value          : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 4991054
+instructions         : 3208046
+cycles/page          : 1218.52
+instructions/page    : 783.21
+offset 0 sum         : 0
+offset 1 sum         : 0
+
+========== 5. old mapping after MADV_DONTNEED ==========
+mapping              : 3f93db8000-3f94db8000 r--s 00000000 00:02 458                            /rootfs_file_lifetime_132.bin (deleted)
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd sh mr mw me ms 
+mincore before drop  : 4096 / 4096 pages
+
+========== 6. first read after discard/drop ==========
+return value          : 0
+minor faults         : 257
+major faults         : 0
+cycles               : 6542068
+instructions         : 4284474
+cycles/page          : 1597.18
+instructions/page    : 1046.01
+offset 0 sum         : 509256
+offset 1 sum         : 509256
+
+========== 6. old mapping still resolves old inode ==========
+offset 0 sum         : 509256
+expected offset 0    : 509256
+offset 1 sum         : 509256
+expected offset 1    : 509256
+signature valid      : yes
+
+========== 7. old fd closed ==========
+old fd               : closed
+
+========== 7. MADV_DONTNEED after closing old fd ==========
+return value          : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 5133040
+instructions         : 3295153
+cycles/page          : 1253.18
+instructions/page    : 804.48
+offset 0 sum         : 0
+offset 1 sum         : 0
+
+========== 7. mapping read after closing old fd ==========
+return value          : 0
+minor faults         : 257
+major faults         : 0
+cycles               : 6622232
+instructions         : 4337079
+cycles/page          : 1616.76
+instructions/page    : 1058.86
+offset 0 sum         : 509256
+offset 1 sum         : 509256
+
+========== 7. VMA keeps old file alive ==========
+offset 0 sum         : 509256
+expected offset 0    : 509256
+offset 1 sum         : 509256
+expected offset 1    : 509256
+signature valid      : yes
+
+========== 7. old mapping remains valid ==========
+mapping              : 3f93db8000-3f94db8000 r--s 00000000 00:02 458                            /rootfs_file_lifetime_132.bin (deleted)
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd sh mr mw me ms 
+
+========== 8. old mapping removed ==========
+old fd               : closed
+old VMA              : unmapped
+old inode link count : 0
+old file references  : released by this process
+
+========== 8. pathname still refers to replacement file ==========
+offset 0 sum         : 527864
+expected offset 0    : 527864
+offset 1 sum         : 527864
+expected offset 1    : 527864
+signature valid      : yes
+
+read_sink            : 4074048
+

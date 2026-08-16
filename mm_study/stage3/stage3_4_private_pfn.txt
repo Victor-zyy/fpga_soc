@@ -1,0 +1,319 @@
+~ # ./file_private_pfn 16 512 |
+>     tee stage3_4_private_pfn.txt
+PID                  : 126
+file                 : /file_private_pfn_126.bin
+map_a address        : 0x3f81800000
+map_b address        : 0x3f80600000
+map_a mod 2 MiB      : 0x0
+map_b mod 2 MiB      : 0x0
+mapping size         : 16 MiB
+pages                : 4096
+COW pages            : 512
+COW size             : 2048 kB
+VmPTE baseline       : 24 kB
+
+========== 1. map_a immediately after mmap ==========
+mapping              : 3f81800000-3f82800000 rw-p 00000000 00:02 455                            /file_private_pfn_126.bin
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 1. map_b immediately after mmap ==========
+mapping              : 3f80600000-3f81600000 rw-p 00000000 00:02 455                            /file_private_pfn_126.bin
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 1. pagemap immediately after mmap ==========
+pages compared       : 4096
+map_a present        : 0
+map_b present        : 0
+both present         : 0
+map_a file-bit pages : 0
+map_b file-bit pages : 0
+map_a exclusive      : 0
+map_b exclusive      : 0
+PFN comparable       : 0
+PFN hidden/zero      : 0
+same PFN             : 0
+different PFN        : 0
+PFN comparison usable: NO
+
+========== 2. first read through map_a ==========
+minor faults         : 256
+major faults         : 0
+cycles               : 6565122
+instructions         : 4282253
+cycles/page          : 1602.81
+instructions/page    : 1045.47
+offset 0 sum         : 509256
+offset 1 sum         : 509256
+
+========== 2. first read through map_b ==========
+minor faults         : 256
+major faults         : 0
+cycles               : 4852905
+instructions         : 3009547
+cycles/page          : 1184.79
+instructions/page    : 734.75
+offset 0 sum         : 509256
+offset 1 sum         : 509256
+
+========== 2. map_a initial contents ==========
+offset 0 sum         : 509256
+expected offset 0    : 509256
+offset 1 sum         : 509256
+expected offset 1    : 509256
+signature valid      : yes
+
+========== 2. map_b initial contents ==========
+offset 0 sum         : 509256
+expected offset 0    : 509256
+offset 1 sum         : 509256
+expected offset 1    : 509256
+signature valid      : yes
+
+========== 2. map_a after both reads ==========
+mapping              : 3f81800000-3f82800000 rw-p 00000000 00:02 455                            /file_private_pfn_126.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 8192 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 16384 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 16384 kB
+Anonymous            : 0 kB
+VmPTE                : 88 kB
+VmPTE delta          : 64 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 2. map_b after both reads ==========
+mapping              : 3f80600000-3f81600000 rw-p 00000000 00:02 455                            /file_private_pfn_126.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 8192 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 16384 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 16384 kB
+Anonymous            : 0 kB
+VmPTE                : 88 kB
+VmPTE delta          : 64 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 2. PFNs after both mappings are read ==========
+pages compared       : 4096
+map_a present        : 4096
+map_b present        : 4096
+both present         : 4096
+map_a file-bit pages : 4096
+map_b file-bit pages : 4096
+map_a exclusive      : 0
+map_b exclusive      : 0
+PFN comparable       : 4096
+PFN hidden/zero      : 0
+same PFN             : 4096
+different PFN        : 0
+PFN comparison usable: yes
+
+========== 2. selected PFNs after both reads ==========
+page     map_a PFN       map_b PFN       same  Afile Bfile Aexcl Bexcl
+0        0x0000008233e 0x0000008233e yes   1     1     0     0    
+1        0x0000008121d 0x0000008121d yes   1     1     0     0    
+511      0x00000082933 0x00000082933 yes   1     1     0     0    
+512      0x00000082934 0x00000082934 yes   1     1     0     0    
+513      0x00000082935 0x00000082935 yes   1     1     0     0    
+4095     0x000000bd4d3 0x000000bd4d3 yes   1     1     0     0    
+
+========== 3. private COW writes through map_a ==========
+minor faults         : 512
+major faults         : 0
+cycles               : 11485488
+instructions         : 3916285
+cycles/page          : 22432.59
+instructions/page    : 7648.99
+offset 0 sum         : 0
+offset 1 sum         : 0
+
+========== 3. map_a after its COW ==========
+mapping              : 3f81800000-3f82800000 rw-p 00000000 00:02 455                            /file_private_pfn_126.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 9216 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 14336 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 2048 kB
+Referenced           : 16384 kB
+Anonymous            : 2048 kB
+VmPTE                : 88 kB
+VmPTE delta          : 64 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 3. map_b after map_a COW ==========
+mapping              : 3f80600000-3f81600000 rw-p 00000000 00:02 455                            /file_private_pfn_126.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 9216 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 14336 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 2048 kB
+Referenced           : 16384 kB
+Anonymous            : 0 kB
+VmPTE                : 88 kB
+VmPTE delta          : 64 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 3. PFNs after map_a COW ==========
+pages compared       : 4096
+map_a present        : 4096
+map_b present        : 4096
+both present         : 4096
+map_a file-bit pages : 3584
+map_b file-bit pages : 4096
+map_a exclusive      : 512
+map_b exclusive      : 512
+PFN comparable       : 4096
+PFN hidden/zero      : 0
+same PFN             : 3584
+different PFN        : 512
+PFN comparison usable: yes
+
+========== 3. selected PFNs after map_a COW ==========
+page     map_a PFN       map_b PFN       same  Afile Bfile Aexcl Bexcl
+0        0x000000bd4d5 0x0000008233e no    0     1     1     1    
+1        0x000000bd4d6 0x0000008121d no    0     1     1     1    
+511      0x00000083cd4 0x00000082933 no    0     1     1     1    
+512      0x00000082934 0x00000082934 yes   1     1     0     0    
+513      0x00000082935 0x00000082935 yes   1     1     0     0    
+4095     0x000000bd4d3 0x000000bd4d3 yes   1     1     0     0    
+
+========== 3. map_a private contents ==========
+offset 0 sum         : 64663
+expected offset 0    : 64663
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 3. map_b still sees file contents ==========
+offset 0 sum         : 63307
+expected offset 0    : 63307
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 3. file remains unchanged after map_a COW ==========
+offset 0 sum         : 63307
+expected offset 0    : 63307
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 4. private COW writes through map_b ==========
+minor faults         : 512
+major faults         : 0
+cycles               : 9793702
+instructions         : 3410944
+cycles/page          : 19128.32
+instructions/page    : 6662.00
+offset 0 sum         : 0
+offset 1 sum         : 0
+
+========== 4. map_a after both mappings COW ==========
+mapping              : 3f81800000-3f82800000 rw-p 00000000 00:02 455                            /file_private_pfn_126.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 9216 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 14336 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 2048 kB
+Referenced           : 16384 kB
+Anonymous            : 2048 kB
+VmPTE                : 88 kB
+VmPTE delta          : 64 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 4. map_b after both mappings COW ==========
+mapping              : 3f80600000-3f81600000 rw-p 00000000 00:02 455                            /file_private_pfn_126.bin
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 9216 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 14336 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 2048 kB
+Referenced           : 16384 kB
+Anonymous            : 2048 kB
+VmPTE                : 88 kB
+VmPTE delta          : 64 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 4. PFNs after both mappings COW ==========
+pages compared       : 4096
+map_a present        : 4096
+map_b present        : 4096
+both present         : 4096
+map_a file-bit pages : 3584
+map_b file-bit pages : 3584
+map_a exclusive      : 512
+map_b exclusive      : 512
+PFN comparable       : 4096
+PFN hidden/zero      : 0
+same PFN             : 3584
+different PFN        : 512
+PFN comparison usable: yes
+
+========== 4. selected PFNs after both mappings COW ==========
+page     map_a PFN       map_b PFN       same  Afile Bfile Aexcl Bexcl
+0        0x000000bd4d5 0x00000083cd5 no    0     0     1     1    
+1        0x000000bd4d6 0x00000083cd6 no    0     0     1     1    
+511      0x00000083cd4 0x00000083ed4 no    0     0     1     1    
+512      0x00000082934 0x00000082934 yes   1     1     0     0    
+513      0x00000082935 0x00000082935 yes   1     1     0     0    
+4095     0x000000bd4d3 0x000000bd4d3 yes   1     1     0     0    
+
+========== 4. final map_a private contents ==========
+offset 0 sum         : 64663
+expected offset 0    : 64663
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 4. final map_b private contents ==========
+offset 0 sum         : 65897
+expected offset 0    : 65897
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 4. file remains original ==========
+offset 0 sum         : 63307
+expected offset 0    : 63307
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+read_sink            : 2548782
+
