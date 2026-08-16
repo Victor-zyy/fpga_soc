@@ -1,0 +1,331 @@
+~ # ./fork_untouched_zero 16 512 |
+  >     tee stage4_3_fork_untouched_zero.txt
+parent PID           : 72
+mapping address      : 0x3f91600000
+address mod 2 MiB    : 0x0
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+private pages        : 512
+private size         : 2048 kB
+VmPTE baseline       : 24 kB
+
+========== 1. untouched parent mapping before fork ==========
+PID                  : 72
+mapping              : 3f91600000-3f92600000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd wr mr mw me ac 
+
+child PID            : 74
+
+========== 2. parent immediately after fork ==========
+PID                  : 72
+mapping              : 3f91600000-3f92600000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 2. child immediately after fork ==========
+PID                  : 74
+mapping              : 3f91600000-3f92600000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 2. pagemap immediately after fork ==========
+pages compared       : 4096
+parent present       : 0
+child present        : 0
+both present         : 0
+parent exclusive     : 0
+child exclusive      : 0
+parent file-bit      : 0
+child file-bit       : 0
+parent unique PFNs   : 0
+child unique PFNs    : 0
+PFN comparable       : 0
+PFN hidden/zero      : 0
+same PFN             : 0
+different PFN        : 0
+
+========== 3. parent first read of untouched pages ==========
+minor faults         : 4096
+major faults         : 0
+cycles               : 10358069
+instructions         : 7522963
+cycles/page          : 2528.83
+instructions/page    : 1836.66
+offset 0 sum         : 0
+offset 1 sum         : 0
+
+========== 3. child first read of untouched pages ==========
+minor faults         : 4096
+major faults         : 0
+cycles               : 10232663
+instructions         : 7435457
+cycles/page          : 2498.21
+instructions/page    : 1815.30
+offset 0 sum         : 0
+offset 1 sum         : 0
+
+========== 3. parent sees zero contents ==========
+offset 0 sum         : 0
+expected offset 0    : 0
+offset 1 sum         : 0
+expected offset 1    : 0
+signature valid      : yes
+
+========== 3. child sees zero contents ==========
+offset 0 sum         : 0
+expected offset 0    : 0
+offset 1 sum         : 0
+expected offset 1    : 0
+signature valid      : yes
+
+========== 3. parent after zero-page reads ==========
+PID                  : 72
+mapping              : 3f91600000-3f92600000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 3. child after zero-page reads ==========
+PID                  : 74
+mapping              : 3f91600000-3f92600000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 3. PFNs after both map the zero page ==========
+pages compared       : 4096
+parent present       : 4096
+child present        : 4096
+both present         : 4096
+parent exclusive     : 0
+child exclusive      : 0
+parent file-bit      : 0
+child file-bit       : 0
+parent unique PFNs   : 1
+child unique PFNs    : 1
+PFN comparable       : 4096
+PFN hidden/zero      : 0
+same PFN             : 4096
+different PFN        : 0
+
+========== 3. selected entries after zero-page reads ==========
+page     parent PFN      child PFN       same Pzero Czero Panon Canon Pexcl Cexcl
+0        0x000000810de 0x000000810de yes  1     1     0     0     0     0    
+1        0x000000810de 0x000000810de yes  1     1     0     0     0     0    
+511      0x000000810de 0x000000810de yes  1     1     0     0     0     0    
+512      0x000000810de 0x000000810de yes  1     1     0     0     0     0    
+513      0x000000810de 0x000000810de yes  1     1     0     0     0     0    
+4095     0x000000810de 0x000000810de yes  1     1     0     0     0     0    
+
+========== 4. parent zero-page to private writes ==========
+minor faults         : 512
+major faults         : 0
+cycles               : 6788381
+instructions         : 2786169
+cycles/page          : 13258.56
+instructions/page    : 5441.74
+offset 0 sum         : 64663
+offset 1 sum         : 0
+
+========== 4. parent PFNs change from zero page ==========
+first page           : 0
+pages                : 512
+PFN comparable       : 512
+PFN unavailable      : 0
+PFN unchanged        : 0
+PFN changed          : 512
+
+page     before PFN      after PFN       same
+0        0x000000810de 0x000000812c0 no
+1        0x000000810de 0x000000812c1 no
+511      0x000000810de 0x00000082735 no
+
+========== 4. parent private contents ==========
+offset 0 sum         : 64663
+expected offset 0    : 64663
+offset 1 sum         : 0
+expected offset 1    : 0
+signature valid      : yes
+
+========== 4. child still sees zero contents ==========
+offset 0 sum         : 0
+expected offset 0    : 0
+offset 1 sum         : 0
+expected offset 1    : 0
+signature valid      : yes
+
+========== 4. parent after its private allocation ==========
+PID                  : 72
+mapping              : 3f91600000-3f92600000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 2048 kB
+Pss                  : 2048 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 2048 kB
+Referenced           : 2048 kB
+Anonymous            : 2048 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 4. child after parent writes ==========
+PID                  : 74
+mapping              : 3f91600000-3f92600000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 0 kB
+Pss                  : 0 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 0 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 4. PFNs after only parent writes ==========
+pages compared       : 4096
+parent present       : 4096
+child present        : 4096
+both present         : 4096
+parent exclusive     : 512
+child exclusive      : 0
+parent file-bit      : 0
+child file-bit       : 0
+parent unique PFNs   : 513
+child unique PFNs    : 1
+PFN comparable       : 4096
+PFN hidden/zero      : 0
+same PFN             : 3584
+different PFN        : 512
+
+========== 4. selected entries after parent writes ==========
+page     parent PFN      child PFN       same Pzero Czero Panon Canon Pexcl Cexcl
+0        0x000000812c0 0x000000810de no   0     1     1     0     1     0    
+1        0x000000812c1 0x000000810de no   0     1     1     0     1     0    
+511      0x00000082735 0x000000810de no   0     1     1     0     1     0    
+512      0x000000810de 0x000000810de yes  1     1     0     0     0     0    
+513      0x000000810de 0x000000810de yes  1     1     0     0     0     0    
+4095     0x000000810de 0x000000810de yes  1     1     0     0     0     0    
+
+========== 5. child zero-page to private writes ==========
+minor faults         : 512
+major faults         : 0
+cycles               : 7227624
+instructions         : 2949125
+cycles/page          : 14116.45
+instructions/page    : 5760.01
+offset 0 sum         : 65897
+offset 1 sum         : 0
+
+========== 5. child private contents ==========
+offset 0 sum         : 65897
+expected offset 0    : 65897
+offset 1 sum         : 0
+expected offset 1    : 0
+signature valid      : yes
+
+========== 5. parent retains its own contents ==========
+offset 0 sum         : 64663
+expected offset 0    : 64663
+offset 1 sum         : 0
+expected offset 1    : 0
+signature valid      : yes
+
+========== 5. parent after both processes write ==========
+PID                  : 72
+mapping              : 3f91600000-3f92600000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 2048 kB
+Pss                  : 2048 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 2048 kB
+Referenced           : 2048 kB
+Anonymous            : 2048 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 5. child after both processes write ==========
+PID                  : 74
+mapping              : 3f91600000-3f92600000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 2048 kB
+Pss                  : 2048 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 2048 kB
+Referenced           : 2048 kB
+Anonymous            : 2048 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 5. PFNs after both processes write ==========
+pages compared       : 4096
+parent present       : 4096
+child present        : 4096
+both present         : 4096
+parent exclusive     : 512
+child exclusive      : 512
+parent file-bit      : 0
+child file-bit       : 0
+parent unique PFNs   : 513
+child unique PFNs    : 513
+PFN comparable       : 4096
+PFN hidden/zero      : 0
+same PFN             : 3584
+different PFN        : 512
+
+========== 5. selected entries after both write ==========
+page     parent PFN      child PFN       same Pzero Czero Panon Canon Pexcl Cexcl
+0        0x000000812c0 0x0000008273b no   0     0     1     1     1     1    
+1        0x000000812c1 0x0000008273c no   0     0     1     1     1     1    
+511      0x00000082735 0x0000008249a no   0     0     1     1     1     1    
+512      0x000000810de 0x000000810de yes  1     1     0     0     0     0    
+513      0x000000810de 0x000000810de yes  1     1     0     0     0     0    
+4095     0x000000810de 0x000000810de yes  1     1     0     0     0     0    
+
+========== 6. child exit ==========
+child exited normally: yes
+child exit status    : 0
+read_sink            : 129326
+

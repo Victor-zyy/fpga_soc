@@ -1,0 +1,367 @@
+~ # ./fork_exit_convergence 16 512 |
+   >     tee stage4_4_fork_exit_convergence.txt
+parent PID           : 79
+mapping address      : 0x3fa0c00000
+address mod 2 MiB    : 0x0
+mapping size         : 16 MiB
+pages                : 4096
+range A              : 0-511
+range B              : 512-1023
+range C              : 1024-1535
+range D              : 1536-4095
+range size           : 2048 kB
+VmPTE baseline       : 24 kB
+
+========== 1. parent initial anonymous allocation ==========
+minor faults         : 4096
+major faults         : 0
+cycles               : 49922421
+instructions         : 20293238
+cycles/page          : 12188.09
+instructions/page    : 4954.40
+
+========== 1. parent before fork ==========
+PID                  : 79
+mapping              : 3fa0c00000-3fa1c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+child PID            : 81
+
+========== 2. parent immediately after fork ==========
+PID                  : 79
+mapping              : 3fa0c00000-3fa1c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 8192 kB
+Shared_Dirty         : 16384 kB
+Private_Dirty        : 0 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 2. child immediately after fork ==========
+PID                  : 81
+mapping              : 3fa0c00000-3fa1c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 8192 kB
+Shared_Dirty         : 16384 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 2. PFNs immediately after fork ==========
+pages compared       : 4096
+parent present       : 4096
+child present        : 4096
+both present         : 4096
+parent exclusive     : 0
+child exclusive      : 0
+parent file-bit      : 0
+child file-bit       : 0
+PFN comparable       : 4096
+PFN unavailable      : 0
+same PFN             : 4096
+different PFN        : 0
+
+========== 3. child COW of range A ==========
+minor faults         : 512
+major faults         : 0
+cycles               : 9915867
+instructions         : 3356064
+cycles/page          : 19366.93
+instructions/page    : 6554.81
+
+========== 3. child range A contents ==========
+offset 0 sum         : 64663
+expected offset 0    : 64663
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 3. parent COW of range B ==========
+minor faults         : 512
+major faults         : 0
+cycles               : 9951824
+instructions         : 3390724
+cycles/page          : 19437.16
+instructions/page    : 6622.51
+
+========== 3. child retains its range A COW contents ==========
+offset 0 sum         : 64663
+expected offset 0    : 64663
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 3. child still sees original range B ==========
+offset 0 sum         : 63407
+expected offset 0    : 63407
+offset 1 sum         : 63407
+expected offset 1    : 63407
+signature valid      : yes
+
+========== 3. child sees original range C ==========
+offset 0 sum         : 63507
+expected offset 0    : 63507
+offset 1 sum         : 63507
+expected offset 1    : 63507
+signature valid      : yes
+
+========== 3. parent still sees original range A ==========
+offset 0 sum         : 63307
+expected offset 0    : 63307
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 3. parent sees its range B COW contents ==========
+offset 0 sum         : 65989
+expected offset 0    : 65989
+offset 1 sum         : 63407
+expected offset 1    : 63407
+signature valid      : yes
+
+========== 3. parent sees original range C ==========
+offset 0 sum         : 63507
+expected offset 0    : 63507
+offset 1 sum         : 63507
+expected offset 1    : 63507
+signature valid      : yes
+
+========== 3. parent after both COW operations ==========
+PID                  : 79
+mapping              : 3fa0c00000-3fa1c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 10240 kB
+Shared_Dirty         : 12288 kB
+Private_Dirty        : 4096 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 3. child after both COW operations ==========
+PID                  : 81
+mapping              : 3fa0c00000-3fa1c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 10240 kB
+Shared_Dirty         : 12288 kB
+Private_Dirty        : 4096 kB
+Referenced           : 6144 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 3. PFNs after both COW operations ==========
+pages compared       : 4096
+parent present       : 4096
+child present        : 4096
+both present         : 4096
+parent exclusive     : 1024
+child exclusive      : 1024
+parent file-bit      : 0
+child file-bit       : 0
+PFN comparable       : 4096
+PFN unavailable      : 0
+same PFN             : 3072
+different PFN        : 1024
+
+========== 3. selected PFNs before child exit ==========
+page     parent PFN      child PFN       same  Pexcl Cexcl
+0        0x000000813f5 0x000000821a4 no    1     1    
+511      0x000000bd5a2 0x000000829a3 no    1     1    
+512      0x000000829a5 0x000000bd5a3 no    1     1    
+1023     0x00000082ba4 0x000000bd519 no    1     1    
+1024     0x000000bd51a 0x000000bd51a yes   0     0    
+1535     0x00000082219 0x00000082219 yes   0     0    
+1536     0x0000008221a 0x0000008221a yes   0     0    
+4095     0x00000082199 0x00000082199 yes   0     0    
+
+========== 3. child process while alive ==========
+PID                  : 81
+/proc entry exists   : yes
+state available      : yes
+process state        : S
+VmPTE field present  : yes
+VmPTE                : 56 kB
+mapping in smaps     : yes
+
+========== 4. parent PFNs before child exit ==========
+pages                : 4096
+present              : 4096
+exclusive            : 1024
+
+========== 4. child after exit, before waitpid ==========
+PID                  : 81
+/proc entry exists   : yes
+state available      : yes
+process state        : Z
+VmPTE field present  : no
+mapping in smaps     : no
+
+========== 4. parent while child is zombie ==========
+PID                  : 79
+mapping              : 3fa0c00000-3fa1c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 4. parent PFNs after child mm release ==========
+pages                : 4096
+present              : 4096
+exclusive            : 4096
+
+========== 4. parent PFNs across child exit ==========
+first page           : 0
+pages                : 4096
+PFN comparable       : 4096
+PFN unavailable      : 0
+PFN unchanged        : 4096
+PFN changed          : 0
+
+page     before PFN      after PFN       same
+0        0x000000813f5 0x000000813f5 yes
+1        0x000000813f6 0x000000813f6 yes
+4095     0x00000082199 0x00000082199 yes
+
+========== 5. child reaped ==========
+child exited normally: yes
+child exit status    : 0
+
+========== 5. child after waitpid ==========
+PID                  : 81
+/proc entry exists   : no
+
+========== 6. write range A after child exit ==========
+minor faults         : 512
+major faults         : 0
+cycles               : 1510506
+instructions         : 967313
+cycles/page          : 2950.21
+instructions/page    : 1889.28
+
+========== 6. range A PFN comparison ==========
+first page           : 0
+pages                : 512
+PFN comparable       : 512
+PFN unavailable      : 0
+PFN unchanged        : 512
+PFN changed          : 0
+
+page     before PFN      after PFN       same
+0        0x000000813f5 0x000000813f5 yes
+1        0x000000813f6 0x000000813f6 yes
+511      0x000000bd5a2 0x000000bd5a2 yes
+
+========== 7. write range B after child exit ==========
+minor faults         : 0
+major faults         : 0
+cycles               : 57853
+instructions         : 15826
+cycles/page          : 112.99
+instructions/page    : 30.91
+
+========== 7. range B PFN comparison ==========
+first page           : 512
+pages                : 512
+PFN comparable       : 512
+PFN unavailable      : 0
+PFN unchanged        : 512
+PFN changed          : 0
+
+page     before PFN      after PFN       same
+512      0x000000829a5 0x000000829a5 yes
+513      0x000000829a6 0x000000829a6 yes
+1023     0x00000082ba4 0x00000082ba4 yes
+
+========== 8. write range C after child exit ==========
+minor faults         : 512
+major faults         : 0
+cycles               : 1498076
+instructions         : 966596
+cycles/page          : 2925.93
+instructions/page    : 1887.88
+
+========== 8. range C PFN comparison ==========
+first page           : 1024
+pages                : 512
+PFN comparable       : 512
+PFN unavailable      : 0
+PFN unchanged        : 512
+PFN changed          : 0
+
+page     before PFN      after PFN       same
+1024     0x000000bd51a 0x000000bd51a yes
+1025     0x000000bd51b 0x000000bd51b yes
+1535     0x00000082219 0x00000082219 yes
+
+========== 9. final range A ==========
+offset 0 sum         : 64187
+expected offset 0    : 64187
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 9. final range B ==========
+offset 0 sum         : 66473
+expected offset 0    : 66473
+offset 1 sum         : 63407
+expected offset 1    : 63407
+signature valid      : yes
+
+========== 9. final range C ==========
+offset 0 sum         : 65057
+expected offset 0    : 65057
+offset 1 sum         : 63507
+expected offset 1    : 63507
+signature valid      : yes
+
+========== 9. final untouched range D ==========
+offset 0 sum         : 319035
+expected offset 0    : 319035
+offset 1 sum         : 319035
+expected offset 1    : 319035
+signature valid      : yes
+
+========== 9. final parent mapping ==========
+PID                  : 79
+mapping              : 3fa0c00000-3fa1c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+read_sink            : 1407032
+

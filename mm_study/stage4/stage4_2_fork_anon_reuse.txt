@@ -1,0 +1,271 @@
+./f~ # ./fork_anon_reuse 16 512 |
+>     tee stage4_2_fork_anon_reuse.txt
+parent PID           : 64
+mapping address      : 0x3fa7c00000
+address mod 2 MiB    : 0x0
+mapping size         : 16 MiB
+pages                : 4096
+true COW range       : 0-511
+reuse range          : 512-1023
+range size           : 2048 kB
+VmPTE baseline       : 24 kB
+
+========== 1. parent initial anonymous allocation ==========
+minor faults         : 4096
+major faults         : 0
+cycles               : 49915419
+instructions         : 20402319
+cycles/page          : 12186.38
+instructions/page    : 4981.03
+
+========== 1. initial contents ==========
+offset 0 sum         : 509256
+expected offset 0    : 509256
+offset 1 sum         : 509256
+expected offset 1    : 509256
+signature valid      : yes
+
+========== 1. parent before fork ==========
+PID                  : 64
+mapping              : 3fa7c00000-3fa8c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+child PID            : 66
+
+========== 2. parent immediately after fork ==========
+PID                  : 64
+mapping              : 3fa7c00000-3fa8c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 8192 kB
+Shared_Dirty         : 16384 kB
+Private_Dirty        : 0 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 2. child immediately after fork ==========
+PID                  : 66
+mapping              : 3fa7c00000-3fa8c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 8192 kB
+Shared_Dirty         : 16384 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 2. PFNs immediately after fork ==========
+pages compared       : 4096
+parent present       : 4096
+child present        : 4096
+both present         : 4096
+parent exclusive     : 0
+child exclusive      : 0
+parent file-bit      : 0
+child file-bit       : 0
+PFN comparable       : 4096
+PFN hidden/zero      : 0
+same PFN             : 4096
+different PFN        : 0
+
+========== 3. parent writes while child is alive ==========
+minor faults         : 512
+major faults         : 0
+cycles               : 9621652
+instructions         : 3276571
+cycles/page          : 18792.29
+instructions/page    : 6399.55
+
+========== 3. true COW PFN comparison ==========
+first page           : 0
+pages                : 512
+PFN comparable       : 512
+PFN unavailable      : 0
+PFN unchanged        : 0
+PFN changed          : 512
+
+page     before PFN      after PFN       same
+0        0x000000823c8 0x000000813e1 no
+1        0x000000823c9 0x000000813e2 no
+511      0x000000bf796 0x000000809e0 no
+
+========== 3. parent sees its COW contents ==========
+offset 0 sum         : 64663
+expected offset 0    : 64663
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 3. child still sees original contents ==========
+offset 0 sum         : 63307
+expected offset 0    : 63307
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 3. parent after true COW ==========
+PID                  : 64
+mapping              : 3fa7c00000-3fa8c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 9216 kB
+Shared_Dirty         : 14336 kB
+Private_Dirty        : 2048 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 3. child after parent COW ==========
+PID                  : 66
+mapping              : 3fa7c00000-3fa8c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 9216 kB
+Shared_Dirty         : 14336 kB
+Private_Dirty        : 2048 kB
+Referenced           : 2048 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 3. PFNs after true COW ==========
+pages compared       : 4096
+parent present       : 4096
+child present        : 4096
+both present         : 4096
+parent exclusive     : 512
+child exclusive      : 512
+parent file-bit      : 0
+child file-bit       : 0
+PFN comparable       : 4096
+PFN hidden/zero      : 0
+same PFN             : 3584
+different PFN        : 512
+
+========== 4. child exit ==========
+child exited normally: yes
+child exit status    : 0
+
+========== 4. parent after child exit ==========
+PID                  : 64
+mapping              : 3fa7c00000-3fa8c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 5. reuse range before first write ==========
+pages                : 512
+present              : 512
+exclusive            : 512
+file-bit             : 0
+
+========== 5. first parent write after child exit ==========
+minor faults         : 512
+major faults         : 0
+cycles               : 1489766
+instructions         : 997555
+cycles/page          : 2909.70
+instructions/page    : 1948.35
+
+========== 5. reuse range after first write ==========
+pages                : 512
+present              : 512
+exclusive            : 512
+file-bit             : 0
+
+========== 5. in-place reuse PFN comparison ==========
+first page           : 512
+pages                : 512
+PFN comparable       : 512
+PFN unavailable      : 0
+PFN unchanged        : 512
+PFN changed          : 0
+
+page     before PFN      after PFN       same
+512      0x000000bf797 0x000000bf797 yes
+513      0x000000bf798 0x000000bf798 yes
+1023     0x00000082156 0x00000082156 yes
+
+========== 6. second write to reused pages ==========
+minor faults         : 0
+major faults         : 0
+cycles               : 94537
+instructions         : 28926
+cycles/page          : 184.64
+instructions/page    : 56.50
+
+========== 6. hot write PFN comparison ==========
+first page           : 512
+pages                : 512
+PFN comparable       : 512
+PFN unavailable      : 0
+PFN unchanged        : 512
+PFN changed          : 0
+
+page     before PFN      after PFN       same
+512      0x000000bf797 0x000000bf797 yes
+513      0x000000bf798 0x000000bf798 yes
+1023     0x00000082156 0x00000082156 yes
+
+========== 7. final true-COW range ==========
+offset 0 sum         : 64663
+expected offset 0    : 64663
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 7. final reused range ==========
+offset 0 sum         : 64087
+expected offset 0    : 64087
+offset 1 sum         : 63407
+expected offset 1    : 63407
+signature valid      : yes
+
+========== 7. final untouched range ==========
+offset 0 sum         : 382542
+expected offset 0    : 382542
+offset 1 sum         : 382542
+expected offset 1    : 382542
+signature valid      : yes
+
+========== 7. final parent mapping ==========
+PID                  : 64
+mapping              : 3fa7c00000-3fa8c00000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+read_sink            : 2167030
+

@@ -1,0 +1,187 @@
+~ # ./fork_anon_cow 16 512 |
+>     tee stage4_1_fork_anon_cow.txt
+parent PID           : 57
+mapping address      : 0x3f9d000000
+address mod 2 MiB    : 0x0
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+child COW pages      : 512
+child COW size       : 2048 kB
+VmPTE baseline       : 24 kB
+
+========== 1. parent initial anonymous allocation ==========
+minor faults         : 4096
+major faults         : 0
+cycles               : 49668339
+instructions         : 20308264
+cycles/page          : 12126.06
+instructions/page    : 4958.07
+offset 0 sum         : 509256
+offset 1 sum         : 509256
+
+========== 1. parent initial contents ==========
+offset 0 sum         : 509256
+expected offset 0    : 509256
+offset 1 sum         : 509256
+expected offset 1    : 509256
+signature valid      : yes
+
+========== 1. parent before fork ==========
+PID                  : 57
+mapping              : 3f9d000000-3f9e000000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 16384 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 16384 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+child PID            : 59
+
+========== 2. parent immediately after fork ==========
+PID                  : 57
+mapping              : 3f9d000000-3f9e000000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 8192 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 16384 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 2. child immediately after fork ==========
+PID                  : 59
+mapping              : 3f9d000000-3f9e000000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 8192 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 16384 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Referenced           : 0 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 2. PFNs immediately after fork ==========
+pages compared       : 4096
+parent present       : 4096
+child present        : 4096
+both present         : 4096
+parent file-bit      : 0
+child file-bit       : 0
+parent exclusive     : 0
+child exclusive      : 0
+PFN comparable       : 4096
+PFN hidden/zero      : 0
+same PFN             : 4096
+different PFN        : 0
+PFN comparison usable: yes
+
+========== 2. selected PFNs immediately after fork ==========
+page     parent PFN      child PFN       same  Pexcl Cexcl Pfile Cfile
+0        0x00000080a90 0x00000080a90 yes   0     0     0     0    
+1        0x00000080a8f 0x00000080a8f yes   0     0     0     0    
+511      0x00000080891 0x00000080891 yes   0     0     0     0    
+512      0x00000080890 0x00000080890 yes   0     0     0     0    
+513      0x0000008088f 0x0000008088f yes   0     0     0     0    
+4095     0x000000824f8 0x000000824f8 yes   0     0     0     0    
+
+========== 3. child private COW writes ==========
+minor faults         : 512
+major faults         : 0
+cycles               : 10313191
+instructions         : 3511873
+cycles/page          : 20142.95
+instructions/page    : 6859.13
+offset 0 sum         : 64663
+offset 1 sum         : 63307
+
+========== 3. child private contents ==========
+offset 0 sum         : 64663
+expected offset 0    : 64663
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 3. parent still sees original contents ==========
+offset 0 sum         : 63307
+expected offset 0    : 63307
+offset 1 sum         : 63307
+expected offset 1    : 63307
+signature valid      : yes
+
+========== 3. parent after child COW ==========
+PID                  : 57
+mapping              : 3f9d000000-3f9e000000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 9216 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 14336 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 2048 kB
+Referenced           : 16384 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 3. child after its COW ==========
+PID                  : 59
+mapping              : 3f9d000000-3f9e000000 rw-p 00000000 00:00 0 
+Size                 : 16384 kB
+Rss                  : 16384 kB
+Pss                  : 9216 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 14336 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 2048 kB
+Referenced           : 2048 kB
+Anonymous            : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 3. PFNs after child COW ==========
+pages compared       : 4096
+parent present       : 4096
+child present        : 4096
+both present         : 4096
+parent file-bit      : 0
+child file-bit       : 0
+parent exclusive     : 512
+child exclusive      : 512
+PFN comparable       : 4096
+PFN hidden/zero      : 0
+same PFN             : 3584
+different PFN        : 512
+PFN comparison usable: yes
+
+========== 3. selected PFNs after child COW ==========
+page     parent PFN      child PFN       same  Pexcl Cexcl Pfile Cfile
+0        0x00000080a90 0x00000082501 no    1     1     0     0    
+1        0x00000080a8f 0x00000082502 no    1     1     0     0    
+511      0x00000080891 0x00000082700 no    1     1     0     0    
+512      0x00000080890 0x00000080890 yes   0     0     0     0    
+513      0x0000008088f 0x0000008088f yes   0     0     0     0    
+4095     0x000000824f8 0x000000824f8 yes   0     0     0     0    
+
+========== 4. child exit ==========
+child exited normally: yes
+child exit status    : 0
+read_sink            : 1145126
