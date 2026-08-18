@@ -1,0 +1,281 @@
+~ # ./file_mprotect_limits |
+>     tee stage5_5_file_mprotect_limits.txt
+PID                  : 90
+page size            : 4096 bytes
+file                 : stage5_5_backing.bin
+initial A            : 0x11111111
+initial B            : 0x22222222
+initial C            : 0x33333333
+
+========== 0. direct mmap permission matrix ==========
+RO fd + PRIVATE + RW : success
+RO fd + SHARED  + RW : FAILED errno=13 (Permission denied)
+
+map A                : 0x3f91552000
+map B                : 0x3f91551000
+map C                : 0x3f91550000
+
+========== 1A. prefault PRIVATE + RO fd ==========
+value                : 0x11111111
+minor faults         : 1
+major faults         : 0
+
+========== 1B. prefault SHARED + RO fd ==========
+value                : 0x22222222
+minor faults         : 1
+major faults         : 0
+
+========== 1C. prefault SHARED + RW fd ==========
+value                : 0x33333333
+minor faults         : 1
+major faults         : 0
+
+========== 1A. PRIVATE + RO fd before mprotect ==========
+mapping              : 3f91552000-3f91553000 r--p 00000000 00:02 443                            /root/stage5_5_backing.bin
+Rss                  : 4 kB
+Pss                  : 4 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 4 kB
+Anonymous            : 0 kB
+VmFlags              : rd mr mw me 
+has mw               : yes
+has sh               : no
+has ms               : no
+
+========== 1B. SHARED + RO fd before mprotect ==========
+mapping              : 3f91551000-3f91552000 r--s 00001000 00:02 443                            /root/stage5_5_backing.bin
+Rss                  : 4 kB
+Pss                  : 4 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 4 kB
+Anonymous            : 0 kB
+VmFlags              : rd mr me ms 
+has mw               : no
+has sh               : no
+has ms               : yes
+
+========== 1C. SHARED + RW fd before mprotect ==========
+mapping              : 3f91550000-3f91551000 r--s 00002000 00:02 443                            /root/stage5_5_backing.bin
+Rss                  : 4 kB
+Pss                  : 4 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 4 kB
+Anonymous            : 0 kB
+VmFlags              : rd sh mr mw me ms 
+has mw               : yes
+has sh               : yes
+has ms               : yes
+
+========== 1A. A pagemap before mprotect ==========
+raw pagemap          : 0xa100000000081250
+present              : 1
+exclusive            : 1
+file-bit             : 1
+PFN                  : 0x00000081250
+
+========== 1B. B pagemap before mprotect ==========
+raw pagemap          : 0xa100000000081251
+present              : 1
+exclusive            : 1
+file-bit             : 1
+PFN                  : 0x00000081251
+
+========== 1C. C pagemap before mprotect ==========
+raw pagemap          : 0xa100000000081252
+present              : 1
+exclusive            : 1
+file-bit             : 1
+PFN                  : 0x00000081252
+
+========== 2A. PRIVATE RO-fd: R to RW ==========
+return value         : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 31069
+instructions         : 16220
+
+========== 2A. A after mprotect RW ==========
+mapping              : 3f91552000-3f91553000 rw-p 00000000 00:02 443                            /root/stage5_5_backing.bin
+Rss                  : 4 kB
+Pss                  : 4 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 4 kB
+Anonymous            : 0 kB
+VmFlags              : rd wr mr mw me ac 
+has mw               : yes
+has sh               : no
+has ms               : no
+
+========== 2A. A PFN across mprotect ==========
+before PFN           : 0x00000081250
+after PFN            : 0x00000081250
+PFN unchanged        : yes
+PFN changed          : no
+file-bit before      : 1
+file-bit after       : 1
+
+========== 2A. A first write after mprotect ==========
+return value         : 0
+minor faults         : 1
+major faults         : 0
+cycles               : 113662
+instructions         : 38347
+
+========== 2A. A PFN across first write ==========
+before PFN           : 0x00000081250
+after PFN            : 0x00000081256
+PFN unchanged        : no
+PFN changed          : yes
+file-bit before      : 1
+file-bit after       : 0
+
+========== 2A. A after first private write ==========
+mapping              : 3f91552000-3f91553000 rw-p 00000000 00:02 443                            /root/stage5_5_backing.bin
+Rss                  : 4 kB
+Pss                  : 4 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 4 kB
+Anonymous            : 4 kB
+VmFlags              : rd wr mr mw me ac 
+has mw               : yes
+has sh               : no
+has ms               : no
+
+A mapping value      : 0xa1a1a1a1
+A backing file value : 0x11111111
+
+========== 2A. A second private write ==========
+return value         : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 12815
+instructions         : 11457
+
+========== 2B. SHARED RO-fd: R to RW ==========
+return value         : -1
+errno                : 13 (Permission denied)
+minor faults         : 0
+major faults         : 0
+cycles               : 19042
+instructions         : 12493
+
+========== 2B. B after rejected mprotect ==========
+mapping              : 3f91551000-3f91552000 r--s 00001000 00:02 443                            /root/stage5_5_backing.bin
+Rss                  : 4 kB
+Pss                  : 4 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 4 kB
+Anonymous            : 0 kB
+VmFlags              : rd mr me ms 
+has mw               : no
+has sh               : no
+has ms               : yes
+
+========== 2B. B PFN across mprotect attempt ==========
+before PFN           : 0x00000081251
+after PFN            : 0x00000081251
+PFN unchanged        : yes
+PFN changed          : no
+file-bit before      : 1
+file-bit after       : 1
+
+========== 2B. B write after rejected mprotect ==========
+access completed     : no
+signal               : 11
+si_code              : 2 (SEGV_ACCERR)
+si_addr              : 0x3f91551000
+expected address     : 0x3f91551000
+address matches      : yes
+minor faults         : 0
+major faults         : 0
+
+B mapping value      : 0x22222222
+B backing file value : 0x22222222
+
+========== 2C. SHARED RW-fd: R to RW ==========
+return value         : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 29070
+instructions         : 14510
+
+========== 2C. C after mprotect RW ==========
+mapping              : 3f91550000-3f91551000 rw-s 00002000 00:02 443                            /root/stage5_5_backing.bin
+Rss                  : 4 kB
+Pss                  : 4 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 4 kB
+Anonymous            : 0 kB
+VmFlags              : rd wr sh mr mw me ms 
+has mw               : yes
+has sh               : yes
+has ms               : yes
+
+========== 2C. C PFN across mprotect ==========
+before PFN           : 0x00000081252
+after PFN            : 0x00000081252
+PFN unchanged        : yes
+PFN changed          : no
+file-bit before      : 1
+file-bit after       : 1
+
+========== 2C. C first shared write ==========
+return value         : 0
+minor faults         : 1
+major faults         : 0
+cycles               : 20484
+instructions         : 12654
+
+========== 2C. C PFN across first shared write ==========
+before PFN           : 0x00000081252
+after PFN            : 0x00000081252
+PFN unchanged        : yes
+PFN changed          : no
+file-bit before      : 1
+file-bit after       : 1
+
+========== 2C. C after first shared write ==========
+mapping              : 3f91550000-3f91551000 rw-s 00002000 00:02 443                            /root/stage5_5_backing.bin
+Rss                  : 4 kB
+Pss                  : 4 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 4 kB
+Anonymous            : 0 kB
+VmFlags              : rd wr sh mr mw me ms 
+has mw               : yes
+has sh               : yes
+has ms               : yes
+
+C mapping value      : 0xc1c1c1c1
+C backing file value : 0xc1c1c1c1
+
+========== 2C. C second shared write ==========
+return value         : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 67703
+instructions         : 29074
+
+========== 2C. C PFN across second shared write ==========
+before PFN           : 0x00000081252
+after PFN            : 0x00000081252
+PFN unchanged        : yes
+PFN changed          : no
+file-bit before      : 1
+file-bit after       : 1
+
+========== 3. final backing file ==========
+file page A          : 0x11111111 (expected 0x11111111)
+file page B          : 0x22222222 (expected 0x22222222)
+file page C          : 0xc2c2c2c2 (expected 0xc2c2c2c2)
+
+========== 4. semantic summary ==========
+A private mprotect RW success : yes
+A first write COW fault        : yes
+A backing unchanged            : yes
+B shared RO mprotect EACCES    : yes
+B write denied                 : yes
+C shared mprotect RW success   : yes
+C first write same PFN         : yes
+C backing changed              : yes
+

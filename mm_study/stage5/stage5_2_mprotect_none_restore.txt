@@ -1,0 +1,201 @@
+~ # ./mprotect_none_restore 16 1024 512 |
+>     tee stage5_2_mprotect_none_restore.txt
+PID                  : 68
+mapping address      : 0x3fb9c00000
+address mod 2 MiB    : 0x0
+mapping size         : 16 MiB
+pages                : 4096
+protected range      : 1024-1535
+protected size       : 2048 kB
+VmPTE baseline       : 24 kB
+
+========== 1. initial anonymous allocation ==========
+return value         : 0
+minor faults         : 4096
+major faults         : 0
+cycles               : 49567798
+instructions         : 20248381
+cycles/page          : 12101.51
+instructions/page    : 4943.45
+
+========== 1. initial RW layout ==========
+VMA 1               : 3fb9c00000-3fbac00000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 1
+aggregate Rss        : 16384 kB
+aggregate Pss        : 16384 kB
+aggregate Private_Dirty: 16384 kB
+aggregate Anonymous  : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+========== 1. target range before PROT_NONE ==========
+pages                : 512
+pagemap present      : 512
+exclusive            : 512
+
+page     raw pagemap          PFN           present excl
+1024     0x8100000000082093 0x00000082093 1       1
+1025     0x8100000000082094 0x00000082094 1       1
+1535     0x81000000000825d2 0x000000825d2 1       1
+
+mincore before       : 512 / 512
+
+========== 2. mprotect RW to PROT_NONE ==========
+return value         : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 133577
+instructions         : 58871
+cycles/page          : 260.89
+instructions/page    : 114.98
+
+========== 2. layout under PROT_NONE ==========
+VMA 1               : 3fb9c00000-3fba000000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+VMA 2               : 3fba000000-3fba200000 ---p 00000000 00:00 0 
+VmFlags              :  mr mw me ac 
+VMA 3               : 3fba200000-3fbac00000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 3
+aggregate Rss        : 16384 kB
+aggregate Pss        : 16384 kB
+aggregate Private_Dirty: 16384 kB
+aggregate Anonymous  : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+========== 2. pagemap under PROT_NONE ==========
+pages                : 512
+pagemap present      : 512
+exclusive            : 512
+
+page     raw pagemap          PFN           present excl
+1024     0x8100000000082093 0x00000082093 1       1
+1025     0x8100000000082094 0x00000082094 1       1
+1535     0x81000000000825d2 0x000000825d2 1       1
+
+========== 2. PFNs across RW to NONE ==========
+first page           : 1024
+pages                : 512
+PFN comparable       : 512
+PFN unchanged        : 512
+PFN changed          : 0
+
+mincore under NONE   : 512 / 512
+
+========== 3. read from PROT_NONE ==========
+access completed     : no
+signal               : 11
+si_code              : 2 (SEGV_ACCERR)
+si_addr              : 0x3fba007000
+expected address     : 0x3fba007000
+address matches      : yes
+minor faults         : 0
+major faults         : 0
+
+========== 4. write to PROT_NONE ==========
+access completed     : no
+signal               : 11
+si_code              : 2 (SEGV_ACCERR)
+si_addr              : 0x3fba007000
+expected address     : 0x3fba007000
+address matches      : yes
+minor faults         : 0
+major faults         : 0
+
+========== 4. PFNs across denied accesses ==========
+first page           : 1024
+pages                : 512
+PFN comparable       : 512
+PFN unchanged        : 512
+PFN changed          : 0
+
+========== 5. mprotect PROT_NONE to RW ==========
+return value         : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 237509
+instructions         : 121255
+cycles/page          : 463.88
+instructions/page    : 236.83
+
+========== 5. layout after restoring RW ==========
+VMA 1               : 3fb9c00000-3fbac00000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 1
+aggregate Rss        : 16384 kB
+aggregate Pss        : 16384 kB
+aggregate Private_Dirty: 16384 kB
+aggregate Anonymous  : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+========== 5. pagemap after restoring RW ==========
+pages                : 512
+pagemap present      : 512
+exclusive            : 512
+
+page     raw pagemap          PFN           present excl
+1024     0x8100000000082093 0x00000082093 1       1
+1025     0x8100000000082094 0x00000082094 1       1
+1535     0x81000000000825d2 0x000000825d2 1       1
+
+========== 5. PFNs across NONE to RW ==========
+first page           : 1024
+pages                : 512
+PFN comparable       : 512
+PFN unchanged        : 512
+PFN changed          : 0
+
+mincore restored     : 512 / 512
+
+========== 6. first read after restoring RW ==========
+access completed     : yes
+signal               : 0
+si_code              : 0
+minor faults         : 0
+major faults         : 0
+read value           : 28
+expected value       : 28
+
+========== 7. first writes after restoring RW ==========
+return value         : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 62833
+instructions         : 19616
+cycles/page          : 122.72
+instructions/page    : 38.31
+
+========== 7. PFNs across restored writes ==========
+first page           : 1024
+pages                : 512
+PFN comparable       : 512
+PFN unchanged        : 512
+PFN changed          : 0
+
+========== 8. final contents ==========
+offset 0 sum         : 64479
+expected offset 0    : 64479
+offset 1 sum         : 63507
+expected offset 1    : 63507
+signature valid      : yes
+
+========== 8. final mapping ==========
+VMA 1               : 3fb9c00000-3fbac00000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 1
+aggregate Rss        : 16384 kB
+aggregate Pss        : 16384 kB
+aggregate Private_Dirty: 16384 kB
+aggregate Anonymous  : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+sink                 : 127986
+

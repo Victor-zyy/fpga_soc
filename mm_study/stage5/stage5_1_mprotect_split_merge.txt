@@ -1,0 +1,289 @@
+~ # ./mprotect_split_merge 16 1024 512 |
+ >     tee stage5_1_mprotect_split_merge.txt
+PID                  : 61
+mapping address      : 0x3fb0c00000
+address mod 2 MiB    : 0x0
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+protected first page : 1024
+protected last page  : 1535
+protected pages      : 512
+protected size       : 2048 kB
+protected address    : 0x3fb1000000
+VmPTE baseline       : 24 kB
+
+========== 1. initial anonymous allocation ==========
+minor faults         : 4096
+major faults         : 0
+cycles               : 49854367
+instructions         : 20347682
+cycles/page          : 12171.48
+instructions/page    : 4967.70
+
+========== 1. initial contents ==========
+offset 0 sum         : 509256
+expected offset 0    : 509256
+offset 1 sum         : 509256
+expected offset 1    : 509256
+signature valid      : yes
+
+========== 1. initial single RW VMA ==========
+VMA 1               : 3fb0c00000-3fb1c00000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 1
+aggregate Size       : 16384 kB
+aggregate Rss        : 16384 kB
+aggregate Pss        : 16384 kB
+aggregate Shared_Clean : 0 kB
+aggregate Shared_Dirty : 0 kB
+aggregate Private_Clean: 0 kB
+aggregate Private_Dirty: 16384 kB
+aggregate Referenced : 16384 kB
+aggregate Anonymous  : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+========== 1. protected range before mprotect ==========
+pages                : 512
+present              : 512
+exclusive            : 512
+file-bit             : 0
+
+========== 2. mprotect middle range RW to R ==========
+return value         : 0
+
+========== mprotect performance ==========
+minor faults         : 0
+major faults         : 0
+cycles               : 148344
+instructions         : 66399
+cycles/page          : 289.73
+instructions/page    : 129.69
+
+========== 2. layout after RW to R ==========
+VMA 1               : 3fb0c00000-3fb1000000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+VMA 2               : 3fb1000000-3fb1200000 r--p 00000000 00:00 0 
+VmFlags              :  rd mr mw me ac 
+VMA 3               : 3fb1200000-3fb1c00000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 3
+aggregate Size       : 16384 kB
+aggregate Rss        : 16384 kB
+aggregate Pss        : 16384 kB
+aggregate Shared_Clean : 0 kB
+aggregate Shared_Dirty : 0 kB
+aggregate Private_Clean: 0 kB
+aggregate Private_Dirty: 16384 kB
+aggregate Referenced : 16384 kB
+aggregate Anonymous  : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+========== 2. protected range after RW to R ==========
+pages                : 512
+present              : 512
+exclusive            : 512
+file-bit             : 0
+
+========== 2. PFNs across RW to R ==========
+first page           : 1024
+pages                : 512
+PFN comparable       : 512
+PFN unavailable      : 0
+PFN unchanged        : 512
+PFN changed          : 0
+
+page     before PFN      after PFN       same
+1024     0x000000801f7 0x000000801f7 yes
+1025     0x000000801f8 0x000000801f8 yes
+1535     0x000000812f6 0x000000812f6 yes
+
+========== 3. read probe on read-only VMA ==========
+access completed     : yes
+signal               : 0 (none)
+si_code              : 0 (not-SIGSEGV)
+si_addr              : (nil)
+expected address     : 0x3fb1007000
+address matches      : no
+read value           : 28
+minor faults         : 0
+major faults         : 0
+expected read value  : 28
+value matches        : yes
+
+========== 4. denied write probe on read-only VMA ==========
+access completed     : no
+signal               : 11 (SIGSEGV)
+si_code              : 2 (SEGV_ACCERR)
+si_addr              : 0x3fb1007000
+expected address     : 0x3fb1007000
+address matches      : yes
+read value           : 0
+minor faults         : 0
+major faults         : 0
+expected signal      : SIGSEGV
+expected si_code     : SEGV_ACCERR
+permission fault valid: yes
+value after denied write: 28
+contents unchanged   : yes
+
+========== 4. protected range after denied write ==========
+offset 0 sum         : 63507
+expected offset 0    : 63507
+offset 1 sum         : 63507
+expected offset 1    : 63507
+signature valid      : yes
+
+========== 4. PFNs across denied write ==========
+first page           : 1024
+pages                : 512
+PFN comparable       : 512
+PFN unavailable      : 0
+PFN unchanged        : 512
+PFN changed          : 0
+
+page     before PFN      after PFN       same
+1024     0x000000801f7 0x000000801f7 yes
+1025     0x000000801f8 0x000000801f8 yes
+1535     0x000000812f6 0x000000812f6 yes
+
+========== 5. mprotect middle range R to RW ==========
+return value         : 0
+
+========== mprotect performance ==========
+minor faults         : 0
+major faults         : 0
+cycles               : 243541
+instructions         : 134662
+cycles/page          : 475.67
+instructions/page    : 263.01
+
+========== 5. layout after R to RW ==========
+VMA 1               : 3fb0c00000-3fb1c00000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 1
+aggregate Size       : 16384 kB
+aggregate Rss        : 16384 kB
+aggregate Pss        : 16384 kB
+aggregate Shared_Clean : 0 kB
+aggregate Shared_Dirty : 0 kB
+aggregate Private_Clean: 0 kB
+aggregate Private_Dirty: 16384 kB
+aggregate Referenced : 16384 kB
+aggregate Anonymous  : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+========== 5. protected range after restoring RW ==========
+pages                : 512
+present              : 512
+exclusive            : 512
+file-bit             : 0
+
+========== 5. PFNs across R to RW ==========
+first page           : 1024
+pages                : 512
+PFN comparable       : 512
+PFN unavailable      : 0
+PFN unchanged        : 512
+PFN changed          : 0
+
+page     before PFN      after PFN       same
+1024     0x000000801f7 0x000000801f7 yes
+1025     0x000000801f8 0x000000801f8 yes
+1535     0x000000812f6 0x000000812f6 yes
+
+========== 6. first write after restoring RW ==========
+minor faults         : 0
+major faults         : 0
+cycles               : 142361
+instructions         : 44407
+cycles/page          : 278.05
+instructions/page    : 86.73
+
+========== 6. PFNs across first restored write ==========
+first page           : 1024
+pages                : 512
+PFN comparable       : 512
+PFN unavailable      : 0
+PFN unchanged        : 512
+PFN changed          : 0
+
+page     before PFN      after PFN       same
+1024     0x000000801f7 0x000000801f7 yes
+1025     0x000000801f8 0x000000801f8 yes
+1535     0x000000812f6 0x000000812f6 yes
+
+========== 6. contents after first restored write ==========
+offset 0 sum         : 64479
+expected offset 0    : 64479
+offset 1 sum         : 63507
+expected offset 1    : 63507
+signature valid      : yes
+
+========== 7. second hot write ==========
+minor faults         : 0
+major faults         : 0
+cycles               : 67872
+instructions         : 31197
+cycles/page          : 132.56
+instructions/page    : 60.93
+
+========== 7. PFNs across hot write ==========
+first page           : 1024
+pages                : 512
+PFN comparable       : 512
+PFN unavailable      : 0
+PFN unchanged        : 512
+PFN changed          : 0
+
+page     before PFN      after PFN       same
+1024     0x000000801f7 0x000000801f7 yes
+1025     0x000000801f8 0x000000801f8 yes
+1535     0x000000812f6 0x000000812f6 yes
+
+========== 8. final left range ==========
+offset 0 sum         : 126714
+expected offset 0    : 126714
+offset 1 sum         : 126714
+expected offset 1    : 126714
+signature valid      : yes
+
+========== 8. final middle range ==========
+offset 0 sum         : 66081
+expected offset 0    : 66081
+offset 1 sum         : 63507
+expected offset 1    : 63507
+signature valid      : yes
+
+========== 8. final right range ==========
+offset 0 sum         : 319035
+expected offset 0    : 319035
+offset 1 sum         : 319035
+expected offset 1    : 319035
+signature valid      : yes
+
+========== 8. final mapping ==========
+VMA 1               : 3fb0c00000-3fb1c00000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 1
+aggregate Size       : 16384 kB
+aggregate Rss        : 16384 kB
+aggregate Pss        : 16384 kB
+aggregate Shared_Clean : 0 kB
+aggregate Shared_Dirty : 0 kB
+aggregate Private_Clean: 0 kB
+aggregate Private_Dirty: 16384 kB
+aggregate Referenced : 16384 kB
+aggregate Anonymous  : 16384 kB
+VmPTE                : 56 kB
+VmPTE delta          : 32 kB
+
+read_sink            : 2294598
+

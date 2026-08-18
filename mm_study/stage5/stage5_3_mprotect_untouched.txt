@@ -1,0 +1,290 @@
+~ # ./mprotect_untouched 16 1024 512 |
+  >     tee stage5_3_mprotect_untouched.txt
+PID                  : 75
+mapping address      : 0x3f80000000
+address mod 1 GiB    : 0x0
+mapping size         : 16 MiB
+page size            : 4096 bytes
+pages                : 4096
+target range         : 1024-1535
+target size          : 2048 kB
+target address       : 0x3f80400000
+VmPTE baseline       : 24 kB
+
+========== 1. untouched RW mapping ==========
+VMA 1               : 3f80000000-3f81000000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 1
+aggregate Size       : 16384 kB
+aggregate Rss        : 0 kB
+aggregate Pss        : 0 kB
+aggregate Private_Dirty: 0 kB
+aggregate Referenced : 0 kB
+aggregate Anonymous  : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+
+========== target pagemap state ==========
+pages                : 512
+present              : 0
+swapped              : 0
+exclusive            : 0
+nonzero PFNs         : 0
+unique PFNs          : 0
+
+page     raw pagemap          PFN           present excl
+1024     0x0000000000000000 0x00000000000 0       0
+1025     0x0000000000000000 0x00000000000 0       0
+1535     0x0000000000000000 0x00000000000 0       0
+
+target mincore       : 0 / 512
+
+========== 2. untouched RW to R ==========
+return value         : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 40698
+instructions         : 20210
+cycles/page          : 79.49
+instructions/page    : 39.47
+
+========== 2. state after untouched RW to R ==========
+VMA 1               : 3f80000000-3f80400000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+VMA 2               : 3f80400000-3f80600000 r--p 00000000 00:00 0 
+VmFlags              :  rd mr mw me ac 
+VMA 3               : 3f80600000-3f81000000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 3
+aggregate Size       : 16384 kB
+aggregate Rss        : 0 kB
+aggregate Pss        : 0 kB
+aggregate Private_Dirty: 0 kB
+aggregate Referenced : 0 kB
+aggregate Anonymous  : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+
+========== target pagemap state ==========
+pages                : 512
+present              : 0
+swapped              : 0
+exclusive            : 0
+nonzero PFNs         : 0
+unique PFNs          : 0
+
+page     raw pagemap          PFN           present excl
+1024     0x0000000000000000 0x00000000000 0       0
+1025     0x0000000000000000 0x00000000000 0       0
+1535     0x0000000000000000 0x00000000000 0       0
+
+target mincore       : 0 / 512
+
+========== 3. untouched R to RW ==========
+return value         : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 74841
+instructions         : 33356
+cycles/page          : 146.17
+instructions/page    : 65.15
+
+========== 3. state after untouched R to RW ==========
+VMA 1               : 3f80000000-3f81000000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 1
+aggregate Size       : 16384 kB
+aggregate Rss        : 0 kB
+aggregate Pss        : 0 kB
+aggregate Private_Dirty: 0 kB
+aggregate Referenced : 0 kB
+aggregate Anonymous  : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+
+========== target pagemap state ==========
+pages                : 512
+present              : 0
+swapped              : 0
+exclusive            : 0
+nonzero PFNs         : 0
+unique PFNs          : 0
+
+page     raw pagemap          PFN           present excl
+1024     0x0000000000000000 0x00000000000 0       0
+1025     0x0000000000000000 0x00000000000 0       0
+1535     0x0000000000000000 0x00000000000 0       0
+
+target mincore       : 0 / 512
+
+========== 4. untouched RW to PROT_NONE ==========
+return value         : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 92366
+instructions         : 32687
+cycles/page          : 180.40
+instructions/page    : 63.84
+
+========== 4. state under untouched PROT_NONE ==========
+VMA 1               : 3f80000000-3f80400000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+VMA 2               : 3f80400000-3f80600000 ---p 00000000 00:00 0 
+VmFlags              :  mr mw me ac 
+VMA 3               : 3f80600000-3f81000000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 3
+aggregate Size       : 16384 kB
+aggregate Rss        : 0 kB
+aggregate Pss        : 0 kB
+aggregate Private_Dirty: 0 kB
+aggregate Referenced : 0 kB
+aggregate Anonymous  : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+
+========== target pagemap state ==========
+pages                : 512
+present              : 0
+swapped              : 0
+exclusive            : 0
+nonzero PFNs         : 0
+unique PFNs          : 0
+
+page     raw pagemap          PFN           present excl
+1024     0x0000000000000000 0x00000000000 0       0
+1025     0x0000000000000000 0x00000000000 0       0
+1535     0x0000000000000000 0x00000000000 0       0
+
+target mincore       : 0 / 512
+
+========== 5. untouched PROT_NONE to RW ==========
+return value         : 0
+minor faults         : 0
+major faults         : 0
+cycles               : 36354
+instructions         : 17929
+cycles/page          : 71.00
+instructions/page    : 35.02
+
+========== 5. state after untouched NONE to RW ==========
+VMA 1               : 3f80000000-3f81000000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 1
+aggregate Size       : 16384 kB
+aggregate Rss        : 0 kB
+aggregate Pss        : 0 kB
+aggregate Private_Dirty: 0 kB
+aggregate Referenced : 0 kB
+aggregate Anonymous  : 0 kB
+VmPTE                : 24 kB
+VmPTE delta          : 0 kB
+
+========== target pagemap state ==========
+pages                : 512
+present              : 0
+swapped              : 0
+exclusive            : 0
+nonzero PFNs         : 0
+unique PFNs          : 0
+
+page     raw pagemap          PFN           present excl
+1024     0x0000000000000000 0x00000000000 0       0
+1025     0x0000000000000000 0x00000000000 0       0
+1535     0x0000000000000000 0x00000000000 0       0
+
+target mincore       : 0 / 512
+
+========== 6. first reads ==========
+read sum             : 0
+
+========== 6. first read of target pages ==========
+return value         : 0
+minor faults         : 512
+major faults         : 0
+cycles               : 1474558
+instructions         : 1040037
+cycles/page          : 2880.00
+instructions/page    : 2031.32
+
+========== 6. state after first reads ==========
+VMA 1               : 3f80000000-3f81000000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 1
+aggregate Size       : 16384 kB
+aggregate Rss        : 0 kB
+aggregate Pss        : 0 kB
+aggregate Private_Dirty: 0 kB
+aggregate Referenced : 0 kB
+aggregate Anonymous  : 0 kB
+VmPTE                : 28 kB
+VmPTE delta          : 4 kB
+
+========== target pagemap state ==========
+pages                : 512
+present              : 512
+swapped              : 0
+exclusive            : 0
+nonzero PFNs         : 512
+unique PFNs          : 1
+
+page     raw pagemap          PFN           present excl
+1024     0x80000000000810de 0x000000810de 1       0
+1025     0x80000000000810de 0x000000810de 1       0
+1535     0x80000000000810de 0x000000810de 1       0
+
+target mincore       : 512 / 512
+
+========== 7. first writes to target pages ==========
+return value         : 0
+minor faults         : 512
+major faults         : 0
+cycles               : 6602139
+instructions         : 2672757
+cycles/page          : 12894.80
+instructions/page    : 5220.23
+
+========== 7. state after first writes ==========
+VMA 1               : 3f80000000-3f81000000 rw-p 00000000 00:00 0 
+VmFlags              :  rd wr mr mw me ac 
+
+VMA count            : 1
+aggregate Size       : 16384 kB
+aggregate Rss        : 2048 kB
+aggregate Pss        : 2048 kB
+aggregate Private_Dirty: 2048 kB
+aggregate Referenced : 2048 kB
+aggregate Anonymous  : 2048 kB
+VmPTE                : 28 kB
+VmPTE delta          : 4 kB
+
+========== target pagemap state ==========
+pages                : 512
+present              : 512
+swapped              : 0
+exclusive            : 512
+nonzero PFNs         : 512
+unique PFNs          : 512
+
+page     raw pagemap          PFN           present excl
+1024     0x8100000000080895 0x00000080895 1       1
+1025     0x8100000000080896 0x00000080896 1       1
+1535     0x8100000000081298 0x00000081298 1       1
+
+target mincore       : 512 / 512
+
+========== 8. final contents ==========
+offset 0 sum         : 64479
+expected offset 0    : 64479
+offset 1 sum         : 0
+expected offset 1    : 0
+signature valid      : yes
+
+sink                 : 64479
+
