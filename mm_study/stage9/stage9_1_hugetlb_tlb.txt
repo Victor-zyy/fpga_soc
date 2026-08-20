@@ -1,0 +1,36 @@
+h~ # ./hugetlb_tlb | tee stage9_1_hugetlb_tlb.txt
+PID                  : 65
+targets/mapping      : 40
+target spacing       : 4 KiB
+data footprint       : 2.5 KiB
+DTLB entries         : 32
+HugeTLB size         : 2 MiB
+timed accesses       : 65536
+repeats/test         : 5
+counter mode         : independent perf events
+
+base-4K      address         : 0x3f8fc00000
+base-4K      2MiB aligned    : yes
+base-4K      KernelPageSize  : 4 kB
+base-4K      MMUPageSize     : 4 kB
+base-4K      Rss             : 160 kB
+base-4K      Anonymous       : 160 kB
+base-4K      AnonHugePages   : 0 kB
+base-4K      Private_Hugetlb : 0 kB
+
+huge-2M      address         : 0x3f8fa00000
+huge-2M      2MiB aligned    : yes
+huge-2M      KernelPageSize  : 2048 kB
+huge-2M      MMUPageSize     : 2048 kB
+huge-2M      Rss             : 0 kB
+huge-2M      Anonymous       : 0 kB
+huge-2M      AnonHugePages   : 0 kB
+huge-2M      Private_Hugetlb : 2048 kB
+
+ Mapping | logical targets | translations | median cyc/op | best cyc/op | median insn/op | minflt | majflt
+---------+-----------------+--------------+---------------+-------------+----------------+--------+-------
+ base-4K |              40 |           40 |         22.31 |       22.27 |           9.97 |      0 |      0
+ huge-2M |              40 |            1 |         12.00 |       11.79 |           9.58 |      0 |      0
+
+global sink          : 0x0000000000000000
+
