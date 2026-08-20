@@ -1,0 +1,228 @@
+~ # ./drop_pfn_identity |
+>     tee stage6_5_drop_pfn_identity.txt
+PID                  : 150
+page size            : 4096
+
+##################################################
+# CASE A: MADV_DONTNEED
+##################################################
+target VA            : 0x3f98921000
+
+========== A0. private anon before DONTNEED ==========
+maps contains VA     : yes
+pagemap raw          : 0x810000000008247f
+present              : 1
+exclusive            : 1
+file/shared-anon     : 0
+PFN                  : 0x0000008247f
+mincore rc           : 0
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005808
+  LRU                : 0
+  BUDDY              : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  ZERO_PAGE          : 0
+
+========== A1. VA immediately after DONTNEED ==========
+maps contains VA     : yes
+pagemap raw          : 0x0000000000000000
+present              : 0
+exclusive            : 0
+file/shared-anon     : 0
+PFN                  : 0x00000000000
+mincore rc           : 0
+resident             : 0
+kpagecount           : N/A
+kpageflags           : N/A
+
+========== A2. historical PFN after DONTNEED ==========
+historical PFN       : 0x0000008247f
+current kpagecount   : 0
+current kpageflags   : 0x000000000000401c
+  LRU                : 0
+  BUDDY              : 0
+  MMAP               : 0
+  ANON               : 0
+  SWAPBACKED         : 1
+  ZERO_PAGE          : 0
+NOTE                 : this describes the PFN slot NOW, not necessarily the old page
+
+========== A3. first Load after DONTNEED ==========
+minor faults         : 1
+major faults         : 0
+read value           : 0x00000000
+
+========== A4. after first Load ==========
+maps contains VA     : yes
+pagemap raw          : 0x80000000000810de
+present              : 1
+exclusive            : 0
+file/shared-anon     : 0
+PFN                  : 0x000000810de
+mincore rc           : 0
+resident             : 1
+kpagecount           : 0
+kpageflags raw       : 0x0000000101000000
+  LRU                : 0
+  BUDDY              : 0
+  MMAP               : 0
+  ANON               : 0
+  SWAPBACKED         : 0
+  ZERO_PAGE          : 1
+
+========== A5. first Store after DONTNEED ==========
+minor faults         : 1
+major faults         : 0
+
+========== A6. private anon after refault Store ==========
+maps contains VA     : yes
+pagemap raw          : 0x81000000000bd40b
+present              : 1
+exclusive            : 1
+file/shared-anon     : 0
+PFN                  : 0x000000bd40b
+mincore rc           : 0
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005808
+  LRU                : 0
+  BUDDY              : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  ZERO_PAGE          : 0
+
+A old PFN            : 0x0000008247f
+A new PFN            : 0x000000bd40b
+numeric PFN reused   : no
+final value          : 0xa2a2a2a2
+
+##################################################
+# CASE B: munmap
+##################################################
+target VA            : 0x3f9891e000
+
+========== B0. private anon before munmap ==========
+maps contains VA     : yes
+pagemap raw          : 0x81000000000bd40c
+present              : 1
+exclusive            : 1
+file/shared-anon     : 0
+PFN                  : 0x000000bd40c
+mincore rc           : 0
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005808
+  LRU                : 0
+  BUDDY              : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  ZERO_PAGE          : 0
+
+========== B1. same VA immediately after munmap ==========
+maps contains VA     : no
+pagemap raw          : 0x0000000000000000
+present              : 0
+exclusive            : 0
+file/shared-anon     : 0
+PFN                  : 0x00000000000
+mincore rc           : -1
+mincore errno        : 12 (Cannot allocate memory)
+kpagecount           : N/A
+kpageflags           : N/A
+
+========== B2. historical PFN after munmap ==========
+historical PFN       : 0x000000bd40c
+current kpagecount   : 0
+current kpageflags   : 0x0000000000000000
+  LRU                : 0
+  BUDDY              : 0
+  MMAP               : 0
+  ANON               : 0
+  SWAPBACKED         : 0
+  ZERO_PAGE          : 0
+NOTE                 : this describes the PFN slot NOW, not necessarily the old page
+
+remapped VA          : 0x3f9891e000
+
+========== B3. new untouched VMA at same VA ==========
+maps contains VA     : yes
+pagemap raw          : 0x0000000000000000
+present              : 0
+exclusive            : 0
+file/shared-anon     : 0
+PFN                  : 0x00000000000
+mincore rc           : 0
+resident             : 0
+kpagecount           : N/A
+kpageflags           : N/A
+
+========== B4. first Load in new VMA ==========
+minor faults         : 1
+major faults         : 0
+read value           : 0x00000000
+
+========== B5. new VMA after first Load ==========
+maps contains VA     : yes
+pagemap raw          : 0x80000000000810de
+present              : 1
+exclusive            : 0
+file/shared-anon     : 0
+PFN                  : 0x000000810de
+mincore rc           : 0
+resident             : 1
+kpagecount           : 0
+kpageflags raw       : 0x0000000101000000
+  LRU                : 0
+  BUDDY              : 0
+  MMAP               : 0
+  ANON               : 0
+  SWAPBACKED         : 0
+  ZERO_PAGE          : 1
+
+========== B6. first Store in new VMA ==========
+minor faults         : 1
+major faults         : 0
+
+========== B7. new private anon page ==========
+maps contains VA     : yes
+pagemap raw          : 0x81000000000bd40d
+present              : 1
+exclusive            : 1
+file/shared-anon     : 0
+PFN                  : 0x000000bd40d
+mincore rc           : 0
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005808
+  LRU                : 0
+  BUDDY              : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  ZERO_PAGE          : 0
+
+B historical PFN     : 0x000000bd40c
+B new PFN            : 0x000000bd40d
+numeric PFN reused   : no
+final value          : 0xb2b2b2b2
+
+========== final semantic summary ==========
+DONTNEED keeps VMA but removes resident PTE : yes
+DONTNEED first Load returns zero page       : yes
+DONTNEED first Store creates private anon   : yes
+munmap removes VMA + mincore gives ENOMEM   : yes
+same VA remap starts with absent PTE        : yes
+remapped first Load returns zero page       : yes
+remapped first Store creates private anon   : yes
+
+NOTE: old PFN count/flags are observational only;
+      once the VA->PFN mapping disappears, the old PFN
+      number no longer identifies the former page object.
+
+sink                 : 0
+

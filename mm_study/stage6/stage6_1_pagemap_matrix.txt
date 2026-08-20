@@ -1,0 +1,213 @@
+~ # ./pagemap_matrix |
+>     tee stage6_1_pagemap_matrix.txt
+PID                  : 98
+page size            : 4096 bytes
+
+========== 1. true unmapped hole ==========
+VA                   : 0x3f93366000
+maps contains VA     : no
+pagemap raw          : 0x0000000000000000
+present              : 0
+swapped              : 0
+soft-dirty           : 0
+exclusive            : 0
+uffd-wp              : 0
+file/shared-anon     : 0
+PFN                  : 0x00000000000
+mincore              : failed errno=12 (Cannot allocate memory)
+kpagecount           : N/A
+kpageflags           : N/A
+
+========== 2. untouched private anon ==========
+VA                   : 0x3f93370000
+maps contains VA     : yes
+pagemap raw          : 0x0000000000000000
+present              : 0
+swapped              : 0
+soft-dirty           : 0
+exclusive            : 0
+uffd-wp              : 0
+file/shared-anon     : 0
+PFN                  : 0x00000000000
+mincore              : success
+resident             : 0
+kpagecount           : N/A
+kpageflags           : N/A
+
+========== 3. zero-page mapping ==========
+VA                   : 0x3f9336f000
+maps contains VA     : yes
+pagemap raw          : 0x80000000000810de
+present              : 1
+swapped              : 0
+soft-dirty           : 0
+exclusive            : 0
+uffd-wp              : 0
+file/shared-anon     : 0
+PFN                  : 0x000000810de
+mincore              : success
+resident             : 1
+kpagecount           : 0
+kpageflags raw       : 0x0000000101000000
+kpageflags set       : ZERO_PAGE
+
+========== 4. private anonymous ==========
+VA                   : 0x3f9336e000
+maps contains VA     : yes
+pagemap raw          : 0x810000000008131f
+present              : 1
+swapped              : 0
+soft-dirty           : 0
+exclusive            : 1
+uffd-wp              : 0
+file/shared-anon     : 0
+PFN                  : 0x0000008131f
+mincore              : success
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005828
+kpageflags set       : UPTODATE LRU MMAP ANON SWAPBACKED
+
+========== 5. private anon under PROT_NONE ==========
+VA                   : 0x3f9336d000
+maps contains VA     : yes
+pagemap raw          : 0x8100000000081320
+present              : 1
+swapped              : 0
+soft-dirty           : 0
+exclusive            : 1
+uffd-wp              : 0
+file/shared-anon     : 0
+PFN                  : 0x00000081320
+mincore              : success
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005828
+kpageflags set       : UPTODATE LRU MMAP ANON SWAPBACKED
+
+========== 5. PROT_NONE identity comparison ==========
+before PFN           : 0x00000081320
+after PFN            : 0x00000081320
+PFN unchanged        : yes
+before kpagecount    : 1
+after kpagecount     : 1
+kpageflags same     : no
+
+========== 6. private file page before COW ==========
+VA                   : 0x3f9336c000
+maps contains VA     : yes
+pagemap raw          : 0xa10000000008131c
+present              : 1
+swapped              : 0
+soft-dirty           : 0
+exclusive            : 1
+uffd-wp              : 0
+file/shared-anon     : 1
+PFN                  : 0x0000008131c
+mincore              : success
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x000000000000483c
+kpageflags set       : REFERENCED UPTODATE DIRTY LRU MMAP SWAPBACKED
+
+========== 7. private file page after COW ==========
+VA                   : 0x3f9336b000
+maps contains VA     : yes
+pagemap raw          : 0x8100000000081323
+present              : 1
+swapped              : 0
+soft-dirty           : 0
+exclusive            : 1
+uffd-wp              : 0
+file/shared-anon     : 0
+PFN                  : 0x00000081323
+mincore              : success
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005828
+kpageflags set       : UPTODATE LRU MMAP ANON SWAPBACKED
+
+========== 7. file COW identity comparison ==========
+before PFN           : 0x0000008131d
+after PFN            : 0x00000081323
+PFN unchanged        : no
+before kpagecount    : 1
+after kpagecount     : 1
+kpageflags same     : no
+
+COW backing value    : 0x22222222
+COW mapping value    : 0xc0c0c0c0
+
+========== 8. shared file mapping A ==========
+VA                   : 0x3f9336a000
+maps contains VA     : yes
+pagemap raw          : 0xa00000000008131e
+present              : 1
+swapped              : 0
+soft-dirty           : 0
+exclusive            : 0
+uffd-wp              : 0
+file/shared-anon     : 1
+PFN                  : 0x0000008131e
+mincore              : success
+resident             : 1
+kpagecount           : 2
+kpageflags raw       : 0x000000000000483c
+kpageflags set       : REFERENCED UPTODATE DIRTY LRU MMAP SWAPBACKED
+
+========== 9. shared file mapping B ==========
+VA                   : 0x3f93369000
+maps contains VA     : yes
+pagemap raw          : 0xa00000000008131e
+present              : 1
+swapped              : 0
+soft-dirty           : 0
+exclusive            : 0
+uffd-wp              : 0
+file/shared-anon     : 1
+PFN                  : 0x0000008131e
+mincore              : success
+resident             : 1
+kpagecount           : 2
+kpageflags raw       : 0x000000000000483c
+kpageflags set       : REFERENCED UPTODATE DIRTY LRU MMAP SWAPBACKED
+
+========== 8/9. shared alias comparison ==========
+same PFN             : yes
+A kpagecount         : 2
+B kpagecount         : 2
+A exclusive          : 0
+B exclusive          : 0
+
+========== 10. MAP_SHARED anonymous ==========
+VA                   : 0x3f93368000
+maps contains VA     : yes
+pagemap raw          : 0xa100000000081324
+present              : 1
+swapped              : 0
+soft-dirty           : 0
+exclusive            : 1
+uffd-wp              : 0
+file/shared-anon     : 1
+PFN                  : 0x00000081324
+mincore              : success
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000000004838
+kpageflags set       : UPTODATE DIRTY LRU MMAP SWAPBACKED
+
+========== final checks ==========
+hole has no VMA      : yes
+untouched has VMA    : yes
+hole present=0       : yes
+untouched present=0  : yes
+zero page present    : yes
+zero KPF_ZERO_PAGE   : yes
+anon KPF_ANON        : yes
+PROT_NONE same PFN   : yes
+COW changed PFN      : yes
+COW file-bit 1->0    : yes
+shared aliases PFN   : yes
+
+sink                 : 2576980377
+

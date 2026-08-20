@@ -1,0 +1,310 @@
+~ # ./kpageflags_mlock |
+>     tee stage6_4_1_kpageflags_mlock.txt
+PID                  : 122
+page size            : 4096
+mapping              : 0x3fa54a9000
+control page         : 0x3fa54a9000
+mlock target         : 0x3fa54aa000
+onfault target       : 0x3fa54ab000
+
+========== 0A. control initial ==========
+VA                   : 0x3fa54a9000
+pagemap raw          : 0x81000000000bf7f2
+present              : 1
+exclusive            : 1
+PFN                  : 0x000000bf7f2
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005808
+kpageflags set       : UPTODATE MMAP ANON SWAPBACKED
+
+selected flags:
+  LOCKED             : 0
+  LRU                : 0
+  ACTIVE             : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+  REFERENCED         : 0
+  DIRTY              : 0
+
+========== 0B. mlock target initial ==========
+VA                   : 0x3fa54aa000
+pagemap raw          : 0x81000000000bf7f3
+present              : 1
+exclusive            : 1
+PFN                  : 0x000000bf7f3
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005808
+kpageflags set       : UPTODATE MMAP ANON SWAPBACKED
+
+selected flags:
+  LOCKED             : 0
+  LRU                : 0
+  ACTIVE             : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+  REFERENCED         : 0
+  DIRTY              : 0
+
+========== 0C. onfault target untouched ==========
+VA                   : 0x3fa54ab000
+pagemap raw          : 0x0000000000000000
+present              : 0
+exclusive            : 0
+PFN                  : 0x00000000000
+resident             : 0
+kpagecount           : N/A
+kpageflags           : N/A
+
+========== 0. VMA before locking ==========
+mapping              : 3fa54a9000-3fa54ac000 rw-p 00000000 00:00 0 
+Rss                  : 8 kB
+Anonymous            : 8 kB
+Locked               : 0 kB
+VmLck process total  : 0 kB
+VmFlags              : rd wr mr mw me ac 
+has lo               : no
+has lf               : no
+
+========== 1. mlock resident page ==========
+mlock return         : 0
+
+========== 1A. target after mlock ==========
+VA                   : 0x3fa54aa000
+pagemap raw          : 0x81000000000bf7f3
+present              : 1
+exclusive            : 1
+PFN                  : 0x000000bf7f3
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x000000060004582c
+kpageflags set       : REFERENCED UPTODATE LRU MMAP ANON SWAPBACKED UNEVICTABLE
+
+selected flags:
+  LOCKED             : 0
+  LRU                : 1
+  ACTIVE             : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 1
+  REFERENCED         : 1
+  DIRTY              : 0
+
+========== 1A. target VMA after mlock ==========
+mapping              : 3fa54aa000-3fa54ab000 rw-p 00000000 00:00 0 
+Rss                  : 4 kB
+Anonymous            : 4 kB
+Locked               : 4 kB
+VmLck process total  : 4 kB
+VmFlags              : rd wr mr mw me lo ac 
+has lo               : yes
+has lf               : no
+
+========== 1A. target transition into mlock ==========
+before PFN           : 0x000000bf7f3
+after PFN            : 0x000000bf7f3
+PFN unchanged        : yes
+before count         : 1
+after count          : 1
+before UNEVICTABLE   : 0
+after UNEVICTABLE    : 1
+before LRU           : 0
+after LRU            : 1
+before ANON          : 1
+after ANON           : 1
+
+========== 1B. control while target locked ==========
+VA                   : 0x3fa54a9000
+pagemap raw          : 0x81000000000bf7f2
+present              : 1
+exclusive            : 1
+PFN                  : 0x000000bf7f2
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005828
+kpageflags set       : UPTODATE LRU MMAP ANON SWAPBACKED
+
+selected flags:
+  LOCKED             : 0
+  LRU                : 1
+  ACTIVE             : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+  REFERENCED         : 0
+  DIRTY              : 0
+
+========== 2. munlock resident page ==========
+
+========== 2. target after munlock ==========
+VA                   : 0x3fa54aa000
+pagemap raw          : 0x81000000000bf7f3
+present              : 1
+exclusive            : 1
+PFN                  : 0x000000bf7f3
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x000000040000582c
+kpageflags set       : REFERENCED UPTODATE LRU MMAP ANON SWAPBACKED
+
+selected flags:
+  LOCKED             : 0
+  LRU                : 1
+  ACTIVE             : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+  REFERENCED         : 1
+  DIRTY              : 0
+
+========== 2. target VMA after munlock ==========
+mapping              : 3fa54a9000-3fa54ac000 rw-p 00000000 00:00 0 
+Rss                  : 8 kB
+Anonymous            : 8 kB
+Locked               : 0 kB
+VmLck process total  : 0 kB
+VmFlags              : rd wr mr mw me ac 
+has lo               : no
+has lf               : no
+
+========== 2. target transition out of mlock ==========
+before PFN           : 0x000000bf7f3
+after PFN            : 0x000000bf7f3
+PFN unchanged        : yes
+before count         : 1
+after count          : 1
+before UNEVICTABLE   : 1
+after UNEVICTABLE    : 0
+before LRU           : 1
+after LRU            : 1
+before ANON          : 1
+after ANON           : 1
+
+========== 3. mlock2 MLOCK_ONFAULT ==========
+mlock2 return        : 0
+
+========== 3. onfault page before access ==========
+VA                   : 0x3fa54ab000
+pagemap raw          : 0x0000000000000000
+present              : 0
+exclusive            : 0
+PFN                  : 0x00000000000
+resident             : 0
+kpagecount           : N/A
+kpageflags           : N/A
+
+========== 3. onfault VMA before access ==========
+mapping              : 3fa54ab000-3fa54ac000 rw-p 00000000 00:00 0 
+Rss                  : 0 kB
+Anonymous            : 0 kB
+Locked               : 0 kB
+VmLck process total  : 4 kB
+VmFlags              : rd wr mr mw me lo lf ac 
+has lo               : yes
+has lf               : yes
+
+========== 4. first Store into onfault page ==========
+minor faults         : 1
+major faults         : 0
+
+========== 4. onfault page after first Store ==========
+VA                   : 0x3fa54ab000
+pagemap raw          : 0x81000000000bf7f6
+present              : 1
+exclusive            : 1
+PFN                  : 0x000000bf7f6
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000600005808
+kpageflags set       : UPTODATE MMAP ANON SWAPBACKED
+
+selected flags:
+  LOCKED             : 0
+  LRU                : 0
+  ACTIVE             : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+  REFERENCED         : 0
+  DIRTY              : 0
+
+========== 4. onfault VMA after first Store ==========
+mapping              : 3fa54ab000-3fa54ac000 rw-p 00000000 00:00 0 
+Rss                  : 4 kB
+Anonymous            : 4 kB
+Locked               : 4 kB
+VmLck process total  : 4 kB
+VmFlags              : rd wr mr mw me lo lf ac 
+has lo               : yes
+has lf               : yes
+
+========== 5. munlock onfault page ==========
+
+========== 5. onfault page after munlock ==========
+VA                   : 0x3fa54ab000
+pagemap raw          : 0x81000000000bf7f6
+present              : 1
+exclusive            : 1
+PFN                  : 0x000000bf7f6
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005828
+kpageflags set       : UPTODATE LRU MMAP ANON SWAPBACKED
+
+selected flags:
+  LOCKED             : 0
+  LRU                : 1
+  ACTIVE             : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+  REFERENCED         : 0
+  DIRTY              : 0
+
+========== 5. onfault VMA after munlock ==========
+mapping              : 3fa54a9000-3fa54ac000 rw-p 00000000 00:00 0 
+Rss                  : 12 kB
+Anonymous            : 12 kB
+Locked               : 0 kB
+VmLck process total  : 0 kB
+VmFlags              : rd wr mr mw me ac 
+has lo               : no
+has lf               : no
+
+========== 5. onfault physical identity across munlock ==========
+before PFN           : 0x000000bf7f6
+after PFN            : 0x000000bf7f6
+PFN unchanged        : yes
+before count         : 1
+after count          : 1
+before UNEVICTABLE   : 0
+after UNEVICTABLE    : 0
+before LRU           : 0
+after LRU            : 1
+before ANON          : 1
+after ANON           : 1
+
+========== final semantic summary ==========
+resident mlock same PFN + UNEVICTABLE 0->1 : yes
+resident munlock same PFN + UNEVICTABLE 1->0: yes
+MLOCK_ONFAULT leaves untouched page absent  : yes
+onfault first Store creates UNEVICTABLE page: NO
+onfault munlock same PFN + UNEVICTABLE 1->0 : NO
+KPF_LRU remains set while mlocked           : yes
+first onfault Store minor fault             : 1
+
+final values:
+control              : 0x11111111
+mlock target         : 0x22222222
+onfault target       : 0x33333333
+

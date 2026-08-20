@@ -1,0 +1,247 @@
+~ # ./dirty_layers |
+ >     tee stage6_4_3_dirty_layers.txt
+PID                  : 143
+page size            : 4096
+file                 : stage6_4_3_sparse.bin
+anon                 : 0x3fa7953000
+shared A             : 0x3fa7951000
+shared B             : 0x3fa7950000
+private file         : 0x3fa794f000
+file observer        : 0x3fa794e000
+
+##################################################
+# CASE A: private anonymous
+##################################################
+
+========== A1. first anon Store ==========
+minor faults         : 1
+major faults         : 0
+
+========== A2. private anon physical state ==========
+pagemap raw          : 0x8100000000082238
+present              : 1
+exclusive            : 1
+file/shared-anon     : 0
+PFN                  : 0x00000082238
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005828
+KPF_DIRTY            : 0
+KPF_LRU              : 1
+KPF_MMAP             : 1
+KPF_ANON             : 1
+KPF_SWAPBACKED       : 1
+
+========== A3. private anon smaps ==========
+mapping              : 3fa7953000-3fa7954000 rw-p 00000000 00:00 0 
+Rss                  : 4 kB
+Pss                  : 4 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 4 kB
+Anonymous            : 4 kB
+
+##################################################
+# CASE B: shared tmpfs clean -> dirty
+##################################################
+
+========== B1. shared A after read-only prefault ==========
+pagemap raw          : 0xa00000000008223a
+present              : 1
+exclusive            : 0
+file/shared-anon     : 1
+PFN                  : 0x0000008223a
+kpagecount           : 2
+kpageflags raw       : 0x0000000000004828
+KPF_DIRTY            : 0
+KPF_LRU              : 1
+KPF_MMAP             : 1
+KPF_ANON             : 0
+KPF_SWAPBACKED       : 1
+
+========== B2. shared B after read-only prefault ==========
+pagemap raw          : 0xa00000000008223a
+present              : 1
+exclusive            : 0
+file/shared-anon     : 1
+PFN                  : 0x0000008223a
+kpagecount           : 2
+kpageflags raw       : 0x0000000000004828
+KPF_DIRTY            : 0
+KPF_LRU              : 1
+KPF_MMAP             : 1
+KPF_ANON             : 0
+KPF_SWAPBACKED       : 1
+
+========== B3. shared A smaps before Store ==========
+mapping              : 3fa7951000-3fa7952000 rw-s 00000000 00:02 460                            /root/stage6_4_3_sparse.bin
+Rss                  : 4 kB
+Pss                  : 2 kB
+Shared_Clean         : 4 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Anonymous            : 0 kB
+
+B baseline same PFN   : yes
+B backing before     : 0x00000000
+
+========== B4. first shared Store ==========
+minor faults         : 1
+major faults         : 0
+
+========== B5. shared A after Store ==========
+pagemap raw          : 0xa00000000008223a
+present              : 1
+exclusive            : 0
+file/shared-anon     : 1
+PFN                  : 0x0000008223a
+kpagecount           : 2
+kpageflags raw       : 0x000000000000482c
+KPF_DIRTY            : 0
+KPF_LRU              : 1
+KPF_MMAP             : 1
+KPF_ANON             : 0
+KPF_SWAPBACKED       : 1
+
+========== B6. shared B after Store ==========
+pagemap raw          : 0xa00000000008223a
+present              : 1
+exclusive            : 0
+file/shared-anon     : 1
+PFN                  : 0x0000008223a
+kpagecount           : 2
+kpageflags raw       : 0x000000000000482c
+KPF_DIRTY            : 0
+KPF_LRU              : 1
+KPF_MMAP             : 1
+KPF_ANON             : 0
+KPF_SWAPBACKED       : 1
+
+========== B7. shared A smaps after Store ==========
+mapping              : 3fa7951000-3fa7952000 rw-s 00000000 00:02 460                            /root/stage6_4_3_sparse.bin
+Rss                  : 4 kB
+Pss                  : 2 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 4 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Anonymous            : 0 kB
+
+B A value             : 0xb1b1b1b1
+B B value             : 0xb1b1b1b1
+B backing after      : 0xb1b1b1b1
+
+##################################################
+# CASE C: private file -> COW anon
+##################################################
+
+========== C1. private file before COW ==========
+pagemap raw          : 0xa00000000008223b
+present              : 1
+exclusive            : 0
+file/shared-anon     : 1
+PFN                  : 0x0000008223b
+kpagecount           : 2
+kpageflags raw       : 0x0000000000004828
+KPF_DIRTY            : 0
+KPF_LRU              : 1
+KPF_MMAP             : 1
+KPF_ANON             : 0
+KPF_SWAPBACKED       : 1
+
+========== C2. observer before COW ==========
+pagemap raw          : 0xa00000000008223b
+present              : 1
+exclusive            : 0
+file/shared-anon     : 1
+PFN                  : 0x0000008223b
+kpagecount           : 2
+kpageflags raw       : 0x0000000000004828
+KPF_DIRTY            : 0
+KPF_LRU              : 1
+KPF_MMAP             : 1
+KPF_ANON             : 0
+KPF_SWAPBACKED       : 1
+
+========== C3. private VMA before COW ==========
+mapping              : 3fa794f000-3fa7950000 rw-p 00001000 00:02 460                            /root/stage6_4_3_sparse.bin
+Rss                  : 4 kB
+Pss                  : 2 kB
+Shared_Clean         : 4 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 0 kB
+Anonymous            : 0 kB
+
+C baseline same PFN   : yes
+
+========== C4. private file first Store / COW ==========
+minor faults         : 1
+major faults         : 0
+
+========== C5. private COW anon after Store ==========
+pagemap raw          : 0x810000000008223d
+present              : 1
+exclusive            : 1
+file/shared-anon     : 0
+PFN                  : 0x0000008223d
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005828
+KPF_DIRTY            : 0
+KPF_LRU              : 1
+KPF_MMAP             : 1
+KPF_ANON             : 1
+KPF_SWAPBACKED       : 1
+
+========== C6. old file PFN via observer ==========
+pagemap raw          : 0xa10000000008223b
+present              : 1
+exclusive            : 1
+file/shared-anon     : 1
+PFN                  : 0x0000008223b
+kpagecount           : 1
+kpageflags raw       : 0x0000000000004828
+KPF_DIRTY            : 0
+KPF_LRU              : 1
+KPF_MMAP             : 1
+KPF_ANON             : 0
+KPF_SWAPBACKED       : 1
+
+========== C7. private VMA after COW ==========
+mapping              : 3fa794f000-3fa7950000 rw-p 00001000 00:02 460                            /root/stage6_4_3_sparse.bin
+Rss                  : 4 kB
+Pss                  : 4 kB
+Shared_Clean         : 0 kB
+Shared_Dirty         : 0 kB
+Private_Clean        : 0 kB
+Private_Dirty        : 4 kB
+Anonymous            : 4 kB
+
+C private value       : 0xc1c1c1c1
+C observer value      : 0x00000000
+C backing value       : 0x00000000
+
+========== final semantic summary ==========
+A anon KPF_DIRTY remains 0             : yes
+A anon smaps Private_Dirty = 4K        : yes
+A PTE dirty inferred while PG_dirty=0  : yes
+B shared baseline KPF_DIRTY=0/count=2  : yes
+B shared Store KPF_DIRTY 0->1          : NO
+B shared Store keeps same PFN          : yes
+B smaps Shared_Dirty = 4K              : yes
+B Store visible via alias + pread      : yes
+C private file performs true COW       : yes
+C new page is anonymous                : yes
+C new anon KPF_DIRTY remains 0         : yes
+C new anon smaps Private_Dirty = 4K    : yes
+C PTE dirty inferred while PG_dirty=0  : yes
+C private COW leaves backing clean     : yes
+
+========== dirty-layer interpretation ==========
+A: CPU Store -> smaps dirty=yes, KPF_DIRTY=0
+B: shared Store -> smaps dirty=yes, KPF_DIRTY=0
+C: COW Store -> smaps dirty=yes, KPF_DIRTY=0
+
+sink                 : 0
+

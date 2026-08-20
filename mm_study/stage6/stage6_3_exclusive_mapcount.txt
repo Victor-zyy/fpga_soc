@@ -1,0 +1,137 @@
+~ # ./exclusive_mapcount_fork |
+>     tee stage6_3_exclusive_mapcount.txt
+parent PID           : 114
+page size            : 4096
+mapping              : 0x3fa43c3000
+page0 VA             : 0x3fa43c3000
+page1 VA             : 0x3fa43c4000
+page2 VA             : 0x3fa43c5000
+page3 VA             : 0x3fa43c6000
+
+========== 0. parent before fork ==========
+PID                  : 114
+page  PFN           present excl count file/shanon
+0     0x000000bf7bc 1       1    1     0
+1     0x000000bf7bd 1       1    1     0
+2     0x000000bf7be 1       1    1     0
+3     0x000000bf7bf 1       1    1     0
+child PID            : 116
+
+========== 1. after fork ==========
+page | parent PFN   ex cnt | child PFN    ex cnt | same
+0    | 000000bf7bc  0  2   | 000000bf7bc  0  2   | yes
+1    | 000000bf7bd  0  2   | 000000bf7bd  0  2   | yes
+2    | 000000bf7be  0  2   | 000000bf7be  0  2   | yes
+3    | 000000bf7bf  0  2   | 000000bf7bf  0  2   | yes
+
+========== 2. after child COW page0 ==========
+page | parent PFN   ex cnt | child PFN    ex cnt | same
+0    | 000000bf7bc  1  1   | 000000823e9  1  1   | no
+1    | 000000bf7bd  0  2   | 000000bf7bd  0  2   | yes
+2    | 000000bf7be  0  2   | 000000bf7be  0  2   | yes
+3    | 000000bf7bf  0  2   | 000000bf7bf  0  2   | yes
+
+parent page0 value   : 0x10000000 (expected 0x10000000)
+
+========== 3. parent write page0 after child COW ==========
+minor faults         : 1
+major faults         : 0
+before PFN           : 0x000000bf7bc
+after PFN            : 0x000000bf7bc
+PFN unchanged        : yes
+PFN changed          : no
+before exclusive     : 1
+after exclusive      : 1
+before kpagecount    : 1
+after kpagecount     : 1
+
+========== 3. state after parent page0 write ==========
+page | parent PFN   ex cnt | child PFN    ex cnt | same
+0    | 000000bf7bc  1  1   | 000000823e9  1  1   | no
+1    | 000000bf7bd  0  2   | 000000bf7bd  0  2   | yes
+2    | 000000bf7be  0  2   | 000000bf7be  0  2   | yes
+3    | 000000bf7bf  0  2   | 000000bf7bf  0  2   | yes
+
+========== 4. parent true COW page1 ==========
+minor faults         : 1
+major faults         : 0
+before PFN           : 0x000000bf7bd
+after PFN            : 0x000000823ea
+PFN unchanged        : no
+PFN changed          : yes
+before exclusive     : 0
+after exclusive      : 1
+before kpagecount    : 2
+after kpagecount     : 1
+
+========== 4. state after parent COW page1 ==========
+page | parent PFN   ex cnt | child PFN    ex cnt | same
+0    | 000000bf7bc  1  1   | 000000823e9  1  1   | no
+1    | 000000823ea  1  1   | 000000bf7bd  1  1   | no
+2    | 000000bf7be  0  2   | 000000bf7be  0  2   | yes
+3    | 000000bf7bf  0  2   | 000000bf7bf  0  2   | yes
+
+page2 before child exit: PFN=0x000000bf7be ex=0 count=2
+
+========== 5. child exit before waitpid ==========
+child zombie         : yes
+child state          : Z
+
+========== child pagemap while zombie ==========
+pread return         : 0
+
+========== 5. parent while child is zombie ==========
+PID                  : 114
+page  PFN           present excl count file/shanon
+0     0x000000bf7bc 1       1    1     0
+1     0x000000823ea 1       1    1     0
+2     0x000000bf7be 1       1    1     0
+3     0x000000bf7bf 1       1    1     0
+
+========== 5. parent identity across child exit ==========
+page0 PFN unchanged  : yes (0x000000bf7bc -> 0x000000bf7bc)
+page1 PFN unchanged  : yes (0x000000823ea -> 0x000000823ea)
+page2 PFN unchanged  : yes (0x000000bf7be -> 0x000000bf7be)
+page3 PFN unchanged  : yes (0x000000bf7bf -> 0x000000bf7bf)
+
+page2 after child exit : PFN=0x000000bf7be ex=1 count=1
+
+========== 6. parent write page2 after child exit ==========
+minor faults         : 1
+major faults         : 0
+before PFN           : 0x000000bf7be
+after PFN            : 0x000000bf7be
+PFN unchanged        : yes
+PFN changed          : no
+before exclusive     : 1
+after exclusive      : 1
+before kpagecount    : 1
+after kpagecount     : 1
+
+========== 7. second parent write page2 ==========
+minor faults         : 0
+major faults         : 0
+
+========== 8. after waitpid ==========
+waitpid child        : 116
+child exited normally: yes
+child exit status    : 0
+/proc child exists   : no
+
+========== final semantic summary ==========
+pre-fork count1/exclusive1       : yes
+fork count2/exclusive0           : yes
+child COW gives two exclusive PFNs: yes
+parent page0 same-PFN reuse      : yes
+parent page1 true COW            : yes
+child exit count2->1/excl0->1    : yes
+post-exit page2 same-PFN reuse   : yes
+page2 second write no fault      : yes
+child /proc gone after waitpid   : yes
+
+final parent values:
+page0                : 0xa0a0a0a0
+page1                : 0xb1b1b1b1
+page2                : 0xe3e3e3e3
+page3                : 0x10000003
+

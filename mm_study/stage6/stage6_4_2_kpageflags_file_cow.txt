@@ -1,0 +1,299 @@
+~ # ./kpageflags_file_cow |
+>     tee stage6_4_2_kpageflags_file_cow.txt
+PID                  : 138
+page size            : 4096
+file                 : stage6_4_2_backing.bin
+control              : 0x3fbf67c000
+private map          : 0x3fbf67b000
+shared alias         : 0x3fbf67a000
+initial backing      : 0x11111111
+
+========== 0A. private mapping before COW ==========
+VA                   : 0x3fbf67b000
+pagemap raw          : 0xa0000000000825de
+present              : 1
+swapped              : 0
+exclusive            : 0
+file/shared-anon     : 1
+PFN                  : 0x000000825de
+resident             : 1
+kpagecount           : 2
+kpageflags raw       : 0x0000000000004878
+kpageflags set       : UPTODATE DIRTY LRU ACTIVE MMAP SWAPBACKED
+
+selected flags:
+  REFERENCED         : 0
+  UPTODATE           : 1
+  DIRTY              : 1
+  LRU                : 1
+  ACTIVE             : 1
+  MMAP               : 1
+  ANON               : 0
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+
+========== 0B. shared alias before COW ==========
+VA                   : 0x3fbf67a000
+pagemap raw          : 0xa0000000000825de
+present              : 1
+swapped              : 0
+exclusive            : 0
+file/shared-anon     : 1
+PFN                  : 0x000000825de
+resident             : 1
+kpagecount           : 2
+kpageflags raw       : 0x0000000000004878
+kpageflags set       : UPTODATE DIRTY LRU ACTIVE MMAP SWAPBACKED
+
+selected flags:
+  REFERENCED         : 0
+  UPTODATE           : 1
+  DIRTY              : 1
+  LRU                : 1
+  ACTIVE             : 1
+  MMAP               : 1
+  ANON               : 0
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+
+========== 0C. private VMA before COW ==========
+mapping              : 3fbf67b000-3fbf67c000 rw-p 00000000 00:02 457                            /root/stage6_4_2_backing.bin
+Rss                  : 4 kB
+Pss                  : 2 kB
+Shared_Dirty         : 4 kB
+Private_Dirty        : 0 kB
+Anonymous            : 0 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 0D. baseline identity ==========
+same PFN             : yes
+private value        : 0x11111111
+shared alias value   : 0x11111111
+backing value        : 0x11111111
+
+========== 1. first Store / COW ==========
+minor faults         : 1
+major faults         : 0
+
+========== 1A. private COW page immediately after Store ==========
+VA                   : 0x3fbf67b000
+pagemap raw          : 0x81000000000825e2
+present              : 1
+swapped              : 0
+exclusive            : 1
+file/shared-anon     : 0
+PFN                  : 0x000000825e2
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005808
+kpageflags set       : UPTODATE MMAP ANON SWAPBACKED
+
+selected flags:
+  REFERENCED         : 0
+  UPTODATE           : 1
+  DIRTY              : 0
+  LRU                : 0
+  ACTIVE             : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+
+========== 1B. original file page via shared alias after COW ==========
+VA                   : 0x3fbf67a000
+pagemap raw          : 0xa1000000000825de
+present              : 1
+swapped              : 0
+exclusive            : 1
+file/shared-anon     : 1
+PFN                  : 0x000000825de
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x000000000000487c
+kpageflags set       : REFERENCED UPTODATE DIRTY LRU ACTIVE MMAP SWAPBACKED
+
+selected flags:
+  REFERENCED         : 1
+  UPTODATE           : 1
+  DIRTY              : 1
+  LRU                : 1
+  ACTIVE             : 1
+  MMAP               : 1
+  ANON               : 0
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+
+========== 1C. private VMA immediately after COW ==========
+mapping              : 3fbf67b000-3fbf67c000 rw-p 00000000 00:02 457                            /root/stage6_4_2_backing.bin
+Rss                  : 4 kB
+Pss                  : 4 kB
+Shared_Dirty         : 0 kB
+Private_Dirty        : 4 kB
+Anonymous            : 4 kB
+VmFlags              : rd wr mr mw me ac 
+
+========== 1D. private VA file->anon transition ==========
+before PFN           : 0x000000825de
+after PFN            : 0x000000825e2
+PFN unchanged        : no
+PFN changed          : yes
+before bit61         : 1
+after bit61          : 0
+before count         : 2
+after count          : 1
+before ANON          : 0
+after ANON           : 1
+before LRU           : 1
+after LRU            : 0
+before DIRTY         : 1
+after DIRTY          : 0
+before REFERENCED    : 0
+after REFERENCED     : 0
+
+========== 1E. original file PFN across COW ==========
+before PFN           : 0x000000825de
+after PFN            : 0x000000825de
+PFN unchanged        : yes
+PFN changed          : no
+before bit61         : 1
+after bit61          : 1
+before count         : 2
+after count          : 1
+before ANON          : 0
+after ANON           : 0
+before LRU           : 1
+after LRU            : 1
+before DIRTY         : 1
+after DIRTY          : 1
+before REFERENCED    : 0
+after REFERENCED     : 1
+
+========== 1F. content isolation ==========
+private value        : 0xc0c0c0c0
+shared alias value   : 0x11111111
+backing value        : 0x11111111
+
+========== 2. force local batch drain ==========
+
+========== 2A. private COW page after drain ==========
+VA                   : 0x3fbf67b000
+pagemap raw          : 0x81000000000825e2
+present              : 1
+swapped              : 0
+exclusive            : 1
+file/shared-anon     : 0
+PFN                  : 0x000000825e2
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005828
+kpageflags set       : UPTODATE LRU MMAP ANON SWAPBACKED
+
+selected flags:
+  REFERENCED         : 0
+  UPTODATE           : 1
+  DIRTY              : 0
+  LRU                : 1
+  ACTIVE             : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+
+========== 2B. original file page after drain ==========
+VA                   : 0x3fbf67a000
+pagemap raw          : 0xa1000000000825de
+present              : 1
+swapped              : 0
+exclusive            : 1
+file/shared-anon     : 1
+PFN                  : 0x000000825de
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x000000000000487c
+kpageflags set       : REFERENCED UPTODATE DIRTY LRU ACTIVE MMAP SWAPBACKED
+
+selected flags:
+  REFERENCED         : 1
+  UPTODATE           : 1
+  DIRTY              : 1
+  LRU                : 1
+  ACTIVE             : 1
+  MMAP               : 1
+  ANON               : 0
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+
+========== 2C. COW page immediate -> drained ==========
+before PFN           : 0x000000825e2
+after PFN            : 0x000000825e2
+PFN unchanged        : yes
+PFN changed          : no
+before bit61         : 0
+after bit61          : 0
+before count         : 1
+after count          : 1
+before ANON          : 1
+after ANON           : 1
+before LRU           : 0
+after LRU            : 1
+before DIRTY         : 0
+after DIRTY          : 0
+before REFERENCED    : 0
+after REFERENCED     : 0
+
+========== 3. second private Store ==========
+minor faults         : 0
+major faults         : 0
+
+========== 3. private page after second Store ==========
+VA                   : 0x3fbf67b000
+pagemap raw          : 0x81000000000825e2
+present              : 1
+swapped              : 0
+exclusive            : 1
+file/shared-anon     : 0
+PFN                  : 0x000000825e2
+resident             : 1
+kpagecount           : 1
+kpageflags raw       : 0x0000000400005828
+kpageflags set       : UPTODATE LRU MMAP ANON SWAPBACKED
+
+selected flags:
+  REFERENCED         : 0
+  UPTODATE           : 1
+  DIRTY              : 0
+  LRU                : 1
+  ACTIVE             : 0
+  MMAP               : 1
+  ANON               : 1
+  SWAPBACKED         : 1
+  UNEVICTABLE        : 0
+
+========== 4. final contents ==========
+private value        : 0xd0d0d0d0 (expected 0xd0d0d0d0)
+shared alias value   : 0x11111111 (expected 0x11111111)
+backing value        : 0x11111111 (expected 0x11111111)
+
+========== final semantic summary ==========
+baseline same file PFN + bit61=1 + ANON=0 : yes
+COW changed private PFN                   : yes
+private bit61 1->0                       : yes
+private KPF_ANON 0->1                    : yes
+original file PFN survives via alias     : yes
+old file kpagecount 2->1                 : yes
+after COW both PFNs count1/exclusive1    : yes
+private COW leaves backing unchanged     : yes
+first Store minor fault                  : 1
+second Store minor fault                 : 0
+second Store no fault                    : yes
+
+========== dynamic flag observations ==========
+new COW LRU immediate->drain : 0 -> 1
+new COW DIRTY before->after  : 1 -> 0
+new COW REFERENCED before->after: 0 -> 0
+old file DIRTY after COW     : 1
+old file SWAPBACKED          : 1
+new anon SWAPBACKED          : 1
+
+sink                 : 572662306
+
