@@ -1,0 +1,19 @@
+~ # chmod +x ptw_locality 
+~ # ./ptw_locality | tee stage8_ptw_locality.txt
+PID                  : 52
+pages/layout         : 40
+DTLB entries         : 32 (hardware configuration)
+data lines/layout    : 40
+data footprint       : 2.5 KiB
+timed accesses       : 65536
+repeats/layout       : 5
+counter mode         : independent perf events
+
+ Layout     | stride | VmPTE +KiB | median cyc/op | best cyc/op | median insn/op | minflt | majflt
+------------+--------+------------+---------------+-------------+----------------+--------+-------
+ dense      |     4K |          0 |         26.09 |       25.54 |          12.10 |      0 |      0
+ 2M-spread  |     2M |        160 |         67.35 |       67.12 |          13.45 |      0 |      0
+ 1G-spread  |     1G |        316 |        132.45 |      131.60 |          15.68 |      0 |      0
+
+global sink          : 0x0001000000137f40
+
