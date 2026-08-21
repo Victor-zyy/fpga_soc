@@ -1,0 +1,24 @@
+~ # ./cache_line_locality | tee stage11_1_cache_line_locality.txt
+PID                  : 177
+mapping              : 0x3fb3c00000
+KernelPageSize       : 2048 kB
+MMUPageSize          : 2048 kB
+Private_Hugetlb      : 2048 kB
+cache line           : 64 B
+working set          : 1024 KiB
+cache lines          : 16384
+translation WS       : ~1 x 2MiB translation
+access pattern       : random dependent line chase
+timed nodes          : 65536
+repeats/test         : 5
+counter mode         : independent perf events
+
+ Use/line | useful B | median cyc/node | best cyc/node | median cyc/load | median insn/node | minflt | majflt
+----------+----------+-----------------+---------------+-----------------+------------------+--------+-------
+        1 |        8 |           60.90 |         60.89 |           60.90 |             5.13 |      0 |      0
+        2 |       16 |           63.40 |         63.39 |           31.70 |             8.23 |      0 |      0
+        4 |       32 |           67.80 |         67.65 |           16.95 |            12.43 |      0 |      0
+        8 |       64 |           77.28 |         76.53 |            9.66 |            20.85 |      0 |      0
+
+global sink          : 0x0005000500070000
+
