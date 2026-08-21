@@ -1,0 +1,35 @@
+~ # ./l2_conflict | tee stage12_2_l2_conflict.txt
+PID                  : 196
+mapping              : 0x3f83600000
+KernelPageSize       : 2048 kB
+MMUPageSize          : 2048 kB
+Private_Hugetlb      : 2048 kB
+L1D                  : 64 sets, 8-way, 64B line
+L2                   : 512 sets, 4-way, 64B line
+L2 policy            : inclusive
+control stride       : 4 KiB
+conflict stride      : 32 KiB
+control L1 mapping   : same set
+conflict L1 mapping  : same set
+control L2 mapping   : different sets
+conflict L2 mapping  : same set
+max active footprint : 512 B
+translation WS       : ~1 x 2MiB translation
+access pattern       : dependent random-order cycle
+timed accesses       : 131072
+repeats/test         : 5
+counter mode         : independent perf events
+
+ Lines | active B | control cyc/load | conflict cyc/load | conflict-control | conflict best | control insn/load | conflict insn/load | minflt | majflt
+-------+----------+------------------+-------------------+------------------+---------------+-------------------+--------------------+--------+-------
+     1 |       64 |             3.61 |              3.25 |            -0.36 |          3.23 |              3.42 |               3.18 |      0 |      0
+     2 |      128 |             3.24 |              3.25 |             0.00 |          3.24 |              3.22 |               3.17 |      0 |      0
+     3 |      192 |             3.27 |              3.25 |            -0.03 |          3.24 |              3.19 |               3.17 |      0 |      0
+     4 |      256 |             3.25 |              3.24 |            -0.01 |          3.24 |              3.17 |               3.17 |      0 |      0
+     5 |      320 |             3.24 |             27.75 |            24.51 |         27.66 |              3.17 |               4.02 |      0 |      0
+     6 |      384 |             3.25 |             39.74 |            36.50 |         39.68 |              3.18 |               4.36 |      0 |      0
+     7 |      448 |             3.32 |             46.37 |            43.05 |         46.27 |              3.22 |               4.61 |      0 |      0
+     8 |      512 |             3.35 |             50.10 |            46.75 |         50.05 |              3.22 |               4.71 |      0 |      0
+
+global sink          : 0x0000000000012000
+

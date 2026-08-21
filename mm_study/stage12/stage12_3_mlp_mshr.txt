@@ -1,0 +1,32 @@
+~ # chmod +x mlp_mshr 
+~ # ./mlp_mshr | tee stage12_3_mlp_mshr.txt
+PID                  : 204
+mapping              : 0x3f90e00000
+mapping size         : 4 MiB
+KernelPageSize       : 2048 kB
+MMUPageSize          : 2048 kB
+Private_Hugetlb      : 4096 kB
+HugeTLB translations : 2
+superpage TLB cap    : ~4 from stage 9.2
+stream working set   : 512 KiB
+lines/stream         : 8192
+L2 capacity          : 128 KiB
+L2 MSHRs             : 7
+max streams          : 8
+timed total loads    : 215040/test
+repeats/test         : 5
+counter mode         : independent perf events
+
+ Streams | loads/round | median cyc/round | median cyc/load | relative throughput | best cyc/load | median insn/load | minflt | majflt
+---------+-------------+------------------+-----------------+---------------------+---------------+------------------+--------+-------
+       1 |           1 |            60.42 |           60.42 |                1.00x |         60.21 |             5.09 |      0 |      0
+       2 |           2 |           117.96 |           58.98 |                1.02x |         58.79 |             4.02 |      0 |      0
+       3 |           3 |           176.08 |           58.69 |                1.03x |         58.17 |             3.72 |      0 |      0
+       4 |           4 |           234.50 |           58.62 |                1.03x |         58.33 |             3.49 |      0 |      0
+       5 |           5 |           294.07 |           58.81 |                1.03x |         58.50 |             3.42 |      0 |      0
+       6 |           6 |           350.22 |           58.37 |                1.04x |         58.27 |             3.36 |      0 |      0
+       7 |           7 |           412.02 |           58.86 |                1.03x |         58.83 |             3.30 |      0 |      0
+       8 |           8 |           465.97 |           58.25 |                1.04x |         58.02 |             3.24 |      0 |      0
+
+global sink          : 0x000000000004dbc0
+
